@@ -1,0 +1,257 @@
+\documentclass{homework}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage{marginnote}
+\usepackage[outline]{contour}
+\usepackage{MnSymbol}
+\usepackage{stmaryrd}
+\usepackage{cancel}
+
+\author{Michael D. Walker (mw6136)}
+\class{COS597E: Programming Languages, Distributed Systems}
+\date{October 25, 2024}
+\title{Course Project Literature Survey}
+
+\begin{document} \maketitle
+\section{\textbf{Introduction}}
+\noindent Modern Computational Fluid Dynamics (CFD) software relies on distributed-memory parallel computer architectures for large-scale computations. Using resources efficiently while at the same time maintaining high accuracy of the numerical solution is a major challenge. \emph{Computational load imbalance} is a well-known performance issue in multiprocessor reacting flow (e.g., combustion) simulations utilizing directly integrated chemical kinetics. \noindent \textbf{This project proposes to implement a \emph{dynamic load balancing} scheme (specifically Lend When Idle) on my research group's (lab: \href{https://ctrfl.princeton.edu/}{CTRFL}) low Mach number flow solver, \texttt{NGA} \cite{DESJARDINS2008,MACART2016}}. Additionally this project proposes to develop a \emph{reference mapping} paradigm to sort group cells with similar thermochemical composition, thereby evaluating their chemical source terms only when sufficiently dissimilar.
+\\ \\
+\noindent This is literature review covers the related work within the area of the proposed project: \textbf{Dynamic Load Balancing in a Massively Parallel Reacting Flow Solver}. This is accomplished by surveying related literature in four areas:
+\begin{enumerate}
+    \item An introduction to the low Mach flow solver \texttt{NGA}, its associated dependencies, and its current scheme for approximating and distributing load. Additional background is provided on numerical approaches for solution of multi-dimensional reacting flows, especially chemical source term evaluation.
+    \item Overview of selected existing runtime-based, task-neutral dynamic load balancing schemes and implementations. Specifically \emph{work stealing} algorithms that distribute resources through the \texttt{MPI} protocol, like Lend When Idle (LeWI) scheme, are presented.
+    \item Explanation of \emph{reference mapping schemes} and multi-zone reduction models. Overview of previous implementations in literature.
+    \item Overview of state-of-the-art reacting flow solvers and how load balancing is accomplished in these libraries.
+\end{enumerate}
+
+
+
+\section{\textbf{\texttt{NGA} and existing Numerical Scheme}}
+\noindent \texttt{NGA} \cite{DESJARDINS2008,MACART2016} is a 3-D finite-difference energy-conserving low-Mach number flow solver, using derivative operators of arbitrarily high order. It is capable of solving the variable-density Navier-Stokes equations on structured meshes using a fractional-step method. Spatial discretization errors are reduced using local $(n-1)$-th order Lagrange polynomial interpolation to achieve $n$-order accurate viscous terms. The code utilizes detailed temperature- and composition-dependent transport and thermodynamic properties, detailed chemical kinetics, and an ideal gas equation of state. \texttt{NGA} was written for massively parallel large-eddy simulation (LES) and direct numerical simulation (DNS) of both premixed and nonpremixed reacting turbulent flows. It is parallelized using a hybrid \texttt{MPI}/\texttt{OpenMP} approach and is highly scalable. \texttt{NGA} uses an operator splitting technique to decouple the conservation equations and chemical source term calculations. 
+\\ \\ \noindent
+A linear or non-linear system can be defined in matrix form as $\Phi \equiv \phi_{i,j} $ and $\mathbf{f}(\Phi) \equiv f_{i,j} (\Phi)$ for $ i= 1, \dots, N $, $ j= 1, \dots, N $. Parallelization is achieved with geometrical domain decomposition. The Strang splitting scheme is achieved with the spatially discretized governing equations:
+$$\frac{\textrm{d} \Phi}{\textrm{d} t} = \underbracket[0.5pt]{\mathbf{T}(\Phi)}_{\textrm{transport}} + \underbracket[0.5pt]{\mathbf{S}(\Phi)}_{\textrm{chemistry}} $$
+The time derivative is approximated by finite difference involving
+the current and future values. The gradient and divergence operators are approximated with linear functions involving multiple neighboring cells. Transport is relatively linear and has a highly structured Jacobian, with weak coupling between species. Chemistry is highly nonlinear and typically solved implicitly. Chemistry terms are local, so each mesh volume can be solved independently (i.e., in parallel). The chemistry and transport substeps are then:
+\scriptsize
+\begin{alignat*}{3}
+    \frac{\textrm{d} \Phi}{\textrm{d} t} &= \mathbf{S}(\Phi^{(1)}), \qquad &&\Phi^{(1)}(x,0) = \Phi(x,t_n) \;\; & &\textrm{on} \; [t_n, t_n + \Delta t / 2] \\
+    \frac{\textrm{d} \Phi}{\textrm{d} t} &= \mathbf{T}(\Phi^{(2)}), \qquad &&\Phi^{(2)}(x,0) = \Phi^{(1)}(x,\Delta t / 2) \;\; & &\textrm{on} \; [t_n, t_n + \Delta t] \\
+    \frac{\textrm{d} \Phi}{\textrm{d} t} &= \mathbf{S}(\Phi^{(3)}), \qquad &&\Phi^{(3)}(x,0) = \Phi^{(2)}(x,t_n) \;\; & &\textrm{on} \; [t_n + \Delta t / 2, t_n + \Delta t]
+\end{alignat*}
+\normalsize
+Considering the time integration of a stiff reacting system, each implicit integration step involves evaluation of the source terms by Jacobian evaluation and factorization in a Newton-Raphson scheme. A system of ODEs in chemistry is defined based on multiple chemical species $N$ (i.e., types of molecules) evolving through coupled reactions $\frac{d \Phi}{d t} = \mathbf{S} \Phi$, where $\Phi = [\phi_1, \phi_2, ... \phi_N] \in \mathbb{R}^N$ and $\mathbf{S} \in \mathbb{R}^{N \times N}$. Any time integration scheme requires the eigenvalues of $\mathbf{S}$ to lie inside the stability region of the method. The system is stiff if for the set of the eigenvalues $[\lambda_1, \lambda_2, ... \lambda_N]$ of matrix $\mathbf{S}$: $|\lambda_\textrm{max}|/|\lambda_\textrm{min}| \gg 1$
+A stiff problem requires a very small timestep for stability with respect to $|\lambda_\textrm{max}|$ in conjunction with a very long time integration to see any significant change in magnitude associated to $|\lambda_\textrm{min}|$.
+\\ \\ \noindent
+The system $\mathbf{S}(\Phi) = 0$ is solved first by constructing the Jacobian in 2-D $\mathbb{J} \equiv \partial S_{i,j} \, / \, \partial \phi_{i,j}$. Then the Newton-Raphson scheme computes the components of the matrix. Each iteration is defined by the linear system $\mathbb{J}(\Phi^{\, n+1} - \Phi^n) = $ -$ \mathbf{S}(\Phi^n)$ and can then be solved through direct matrix inversion sequentially,
+$$ \Phi^{\, n+1} = \Phi^n - [\mathbb{J}^{-1} \cdot \mathbf{S}(\Phi^n)] \quad \textrm{.} $$
+Here the Jacobian is an $N^2 \times N^2$ matrix and thus \textbf{Jacobian evaluation and factorization is the most expensive step in combustion simulations}.
+\\ \\ \noindent
+With this technique, chemistry can be treated as an independent stiff ODE system within each computational cell. \texttt{NGA} then uses \texttt{SUNDIALS} \cite{SUNDIALS} (SUite of Nonlinear and DIfferential/ALgebraic equation Solvers) \texttt{CVODE} (unsteady solver) for solving stiff systems of initial value ODEs for detailed chemistry (chemical Jacobian construction, inversion, and Newton iteration). 
+\\ \\ \noindent
+Typically, the computational cost of the chemical source term evaluation dominates the performance metrics and creates an un-even computational load distribution in parallel applications. The difficulties occur due to the intrinsic and non-linear nature of the ODE system. Cost of solving the associated stiff ODEs scales quadratically with the number of species \cite{DLBFoam_1,DLBFoam_2}. Furthermore, due to the vast scale separation between the fastest and slowest chemical reaction time scales, the system of ODEs is practically always numerically stiff, requiring the use of implicit time integrators with low timestep values.
+\\ \\ \noindent
+Load balancing is not handled internally by the \texttt{SUNDIALS} integrators but rather is the responsibility of the application developer. As a result of the highly non-linear characteristics of chemical kinetics, a large variation in the convergence rates of the ODE integrator may occur, leading to a high load imbalance across multiprocessor configurations. However, the independent nature of chemistry ODE systems leads to a problem that can be parallelized easily (embarrassingly parallel) during the flow solution. The presented LeWI model takes advantage of this feature and balances the chemistry load across available resources.
+\\ \\ \noindent
+Because the ODEs are uncoupled across the domain, there is considerable freedom in staging their integration. In multi-threaded CPU-based implementations, the total work to integrate all the cells in the domain can be distributed arbitrarily across the available threads with no race or synchronization concerns. The work for each cell can be approximated ahead of time by tracking the work required to integrate the previous timestep. Thus, it is in the earliest timesteps that a Lend When Idle scheme could provide considerable speedup. (Note that unlike the examples \cite{AMReX,PeleC,PeleMP} presented in the \texttt{SUNDIALS} paper, \texttt{NGA} does not have adaptive mesh refinement, so it should be a simpler implementation.)
+
+\section{\textbf{Systems Component: Dynamic Load Balancing schemes}}
+\noindent Lend When Idle \cite{LeWI_ICPP09,GARCIA2014,DLB_OpenMP_SMPS} (LeWI) is a novel \emph{work stealing} \cite{Work_Stealing} algorithm that distributes resources equally among \texttt{MPI} processes in a node while they are doing computation, and re-assigns resources of \texttt{MPI} processes while they are blocked in communication calls. One of its main properties is that the load balancing is task neutral, done at runtime without analyzing nor modifying the application previously.
+\\ \\ \noindent
+The LeWI scheme has previously been implemented with both \texttt{OpenMP} and \texttt{SMPSuperscalar} protocols at the inner layer of parallelism \cite{DLB_OpenMP_SMPS}. \texttt{OpenMP} can only change the number of threads outside a parallel region (e.g., ``DO'' loop). This means that when an \texttt{MPI} process lends its CPUs the \texttt{MPI} process that wants to use them is not able to do so until reaching a new parallel region. This limitation makes the performance of the algorithm highly dependent on the number of parallel regions that the application presents between \texttt{MPI} blocking calls (i.e., if there is just one parallel loop between \texttt{MPI} blocking calls we cannot change the number of threads, therefore, the application cannot be balanced). Conversely, \texttt{SMPSuperscalar} is a shared memory programming model that allows for the change of the number of threads at any time.
+
+\section{\textbf{Programming Languages Component: Reference Mapping schemes}}
+\noindent The timestep value and hence the total number of floating-point operations during the integration depends on the initial thermochemical composition. Parallelization is achieved with geometrical domain decomposition, leading to explicit chemistry load imbalance due to spatially and temporally varying values. A simple reference mapping feature will allow a further reduction in computational cost. This approach groups cells sharing similar thermochemical composition values together and solving the chemistry only once for this group \cite{DLBFoam_1}. Such a mapping approach is intended to be used for regions with low reactivity, (e.g., where no fuel is present or in low-temperature regions far upstream and downstream of the flame, where few chemical reactions are occurring), similar to multi-zone reduction models \cite{Zonal}. \textbf{The reference mapping acts as a filter for load balancing, where the reaction rates of cells satisfying a user-given criteria are copied from a reference cell solution.} At a given time instance, a reference cell is picked and the chemistry source term of that cell is solved and copied to other reference cells. The criteria used for identifying the reference cells is: $Z_i < Z_\textrm{tol}$, $|T_i - T_\textrm{ref} | < T_\textrm{tol}$, where $Z_i$ and $T_i$ are mixture fraction (the mass fraction of fuel in a fuel/oxidizer stream) and temperature of $i$-th cell, respectively, $T_\textrm{ref}$ denotes the temperature of the chosen reference cell and $Z_\textrm{tol}$ and $Z_\textrm{tol}$ are the user-defined tolerance values, specified in the \texttt{input} and \texttt{config} files. 
+\\ \\ \noindent
+As long as properly strict tolerances are used (chemical reactions are highly non-linear based in an Arrhenius law), the introduced error should be rather small and not affect the global characteristics of the reactive simulation. The reference mapping model should improve the balancing performance modestly by further reducing the load of the more idle processes and increasing their potential to receive more load from the busier processes.
+
+\section{\textbf{Other reacting flow solvers}}
+\noindent \texttt{NGA} currently uses a rudimentary load balancing scheme by approximating the work for each cell ahead of time by tracking the work required to integrate the previous timestep. Thus, it is in the earliest timesteps that more robust load balancing scheme could provide considerable speedup. Several test cases will be used to evaluate performance. First, to verify proper code execution a fully-developed turbulent pipe flow configuration (presented in Appendix C) will be simulated. This case has previously been used to conduct weak scaling studies of \texttt{NGA} with increasing grid resolution. More detailed performance benchmark test cases would be simulated using Large Eddy Simulation data of a hydrogen jet flame \cite{TNF,BARLOW1994,BARLOW1996} and Sandia Flame D \cite{BARLOW1998}. Such simulations were published\cite{LACEY2021} using \texttt{NGA} without load balancing (note the massive time per timestep for the early timesteps of Figures 4 and 5 therein).
+\\ \\ \noindent
+Most advanced reacting flow solvers like \texttt{Pele} \cite{PeleC,PeleMP} and \texttt{OpenFoam} \cite{DLBFoam_1,DLBFoam_2} are built on the \texttt{AMReX} structure \cite{AMReX}. \texttt{AMReX} is a publicly available software framework designed for building massively parallel block-structured adaptive mesh refinement (AMR) applications. \texttt{AMReX} provides a very general approach for decomposition of the computational domain into individual logically rectangular grids, and how to distribute those grids to \texttt{MPI} ranks. The ``load balancing'' process combines grid creation (and re-creation when regridding) and distribution of grids to \texttt{MPI} ranks.
+\\ \\ \noindent
+\noindent \textbf{Fluid Solver} Advanced schemes solve the coupled Navier-Stokes system using a second order finite volume MUSCL-Hancock scheme (Monotonic Upstream-Centered Scheme for Conservation Laws). This scheme was designed for solving any system of non-linear hyperbolic conservation laws. The system of equations is shown below. $\rho$ represents the fluid density, $Y_k$ is the mass fraction of species $k$, $E$ is the total energy, and $P$ is the pressure of the fluid. Along with the ideal gas equation of states, these equations represent a closed system. The finite volume method is employed for discretizing the governing equations, starting with a control volume $\Phi$ and flux $F$:
+$$F(\Phi) \rightarrowtriangle \underbrace{\boxed{ \; \Phi \; }}_{\Delta x} \rightarrowtriangle F(\Phi + \Delta \Phi)$$ 
+The conservation equations for one-dimensional, multi-component, reactive compressible flows can be written as
+$$ \frac{\partial \Phi}{\partial t} + \frac{\partial F (\Phi)}{\partial x} + N \frac{G (\Phi)}{x} = \frac{\partial F_\nu (\Phi)}{\partial x} + S (\Phi) $$
+$F_\nu$ is the diffusion flux, $S$ is the reaction term, and $G$ is the geometric shape factor \cite{Chen_thesis}. The vectors $\Phi$, $F (\Phi)$, $G (\Phi)$, $F_\nu(\Phi)$, and $S (\Phi)$ are defined as
+\begin{equation*}
+    \Phi = \begin{bmatrix}
+    \rho Y_1 \\
+    \rho Y_2 \\
+    \vdots \\
+    \rho Y_k \\
+    \rho u \\
+    E
+    \end{bmatrix} \quad
+    \textbf{F}(\Phi) = \begin{bmatrix}
+    \rho u Y_1 \\
+    \rho u Y_2 \\
+    \vdots \\
+    \rho u Y_k \\
+    \rho {u}^2 + P \\
+    (E + P) u
+    \end{bmatrix} \quad
+    \textbf{G}(\Phi) = \begin{bmatrix}
+    \rho u Y_1 \\
+    \rho u Y_2 \\
+    \vdots \\
+    \rho u Y_k \\
+    \rho {u}^2 \\
+    (E + P) u
+    \end{bmatrix} \quad
+    \textbf{F$_\nu$}(\Phi) = \begin{bmatrix}
+    \textrm{viscous terms}
+    \end{bmatrix} \quad
+    \textbf{S}(\Phi) = \begin{bmatrix}
+    \omega_1 \\
+    \omega_2 \\
+    \vdots \\
+    \omega_k \\
+    0 \\
+    0
+    \end{bmatrix}
+\end{equation*}
+where $N$ is the geometry factor ($N=0$, rectangular coordinate; $N=1$, cylindrical coordinate; $N=2$ spherical coordinate). $u$ is the flow velocity and $x(=r)$ is the spatial coordinate. Energy is the low Mach number limit is $E = \rho \, \textrm{e} + \cancel{\rho u^2 / 2} = \rho \, \textrm{e}$.
+\\ \\ \noindent
+To solve the conservative system, the stiff source term $\textbf{S}$ is treated by the fractional-step procedure. In the first fractional step, the non-reactive flow is solved using the MUSCL-Hancock scheme from Toro \cite{Toro2009}.
+\begin{equation*}
+    \left.
+    \begin{aligned}
+        \textrm{PDE}&: \; \frac{\partial \Phi}{\partial t} + \frac{\partial F (\Phi)}{\partial x} + N \frac{G (\Phi)}{x} = \frac{\partial F_\nu (\Phi)}{\partial x} \\
+        \textrm{IC}&: \; \Phi(x, t^n) = \Phi^n
+    \end{aligned}
+    \right\} \rightarrowtriangle \overline{\Phi}^{\, n+1}
+\end{equation*}
+\noindent \textbf{MUSCL-Hancock scheme} To numerically solve the system of equations, a second-order finite-volume MUSCL-Hancock scheme (Monotonic Upstream-Centered Scheme for Conservation Laws) is used. The steps of this solver include:
+\begin{enumerate}
+    \item Data Reconstruction
+    \item Evolution
+    \item Riemann Solution
+    \item Conservative Update \\
+\end{enumerate}
+
+\noindent \emph{Data Reconstruction}: Cell-centered values are extrapolated into slopes between grid cells so that the fluid is represented by a piecewise-linear plane in each of the 2-D cells. The equations describing cell slopes in the $i$ and $j$ direction are:
+\begin{equation*}
+    \Delta_i = \begin{cases}
+        \textbf{max}[0,\textbf{min}(\beta\Delta_{i-1/2},\Delta_{i+1/2}),\textbf{min}(\Delta_{i-1/2},\beta\Delta_{i+1/2})], & \Delta_{i+1/2} > 0 \\
+        \textbf{min}[0,\textbf{max}(\beta\Delta_{i-1/2},\Delta_{i+1/2}),\textbf{max}(\Delta_{i-1/2},\beta\Delta_{i+1/2})], & \Delta_{i+1/2} < 0
+    \end{cases}
+\end{equation*}
+\begin{equation*}
+    \Delta_j = \begin{cases}
+        \textbf{max}[0,\textbf{min}(\beta\Delta_{j-1/2},\Delta_{j+1/2}),\textbf{min}(\Delta_{j-1/2},\beta\Delta_{j+1/2})], & \Delta_{j+1/2} > 0 \\
+        \textbf{min}[0,\textbf{max}(\beta\Delta_{j-1/2},\Delta_{j+1/2}),\textbf{max}(\Delta_{j-1/2},\beta\Delta_{j+1/2})], & \Delta_{j+1/2} < 0
+    \end{cases}
+\end{equation*} \\
+\noindent where $\Delta_{i\pm1/2}, \, \Delta_{j\pm1/2}$ are the slopes in $i$ and $j$ at the cell faces, using a value of $\beta = 1$. The \emph{boundary extrapolated values} ($\Phi_i^L, \, \Phi_i^R, \, \Phi_j^L, \, \Phi_j^R$) are then calculated.
+\[ \Phi_i^L = \Phi_{i,j}^n - \frac{1}{2} \Delta_i, \,\, \Phi_i^R = \Phi_{i,j}^n + \frac{1}{2} \Delta_i \]
+\[ \Phi_j^L = \Phi_{i,j}^n - \frac{1}{2} \Delta_j, \,\, \Phi_j^R = \Phi_{i,j}^n + \frac{1}{2} \Delta_j \]
+\\
+\noindent \emph{Evolution}: Each of the four boundary extrapolated values move forward by a half timestep.
+\begin{equation*}
+    \bar \Phi_{i,j}^{L,R} = \Phi_{i,j}^{L,R} + \frac{1}{2} \frac{\Delta t}{\Delta x}\left( \begin{bmatrix}
+    \rho u_j \\[4pt]
+    \rho u_i u_j \\[4pt]
+    \rho u_j^2 + P \\[4pt]
+    u_j(E + P)
+    \end{bmatrix}_i^L - \begin{bmatrix}
+    \rho u_j \\[4pt]
+    \rho u_i u_j \\[4pt]
+    \rho u_j^2 + P \\[4pt]
+    u_j(E + P)
+    \end{bmatrix}_i^R + \begin{bmatrix}
+    \rho u_i \\[4pt]
+    \rho u_i^2 + P \\[4pt]
+    \rho u_i u_j \\[4pt]
+    u_i(E + P)
+    \end{bmatrix}_j^L - \begin{bmatrix}
+    \rho u_i \\[4pt]
+    \rho u_i^2 + P \\[4pt]
+    \rho u_i u_j \\[4pt]
+    u_i(E + P)
+    \end{bmatrix}_j^R \right)
+\end{equation*}
+The Riemann problem can now be solved using the following equations for the left and right states:
+\begin{equation*}
+    \Phi_{i,riemann}^L = \bar \Phi_i^R, \,\, \Phi_{i,riemann}^R = \bar \Phi_{i+1}^L
+\end{equation*}
+\begin{equation*}
+    \Phi_{j,riemann}^L = \bar \Phi_j^R, \,\, \Phi_{j,riemann}^R = \bar \Phi_{j+1}^L
+\end{equation*}
+\\
+\noindent \emph{Riemann Initial Value Problem}: A HLLC (Harten-Lax-van Leer-Contact) Riemann solver was implemented to calculate the fluxes in the $i$ and $j$ direction at the cell faces \cite{Toro2009}. It determines the states of nearby cells and then calculates the variable fluxes across those cells using conservation laws.
+\\ \\ \noindent
+\emph{Conservative Update}: The conserved variables are then updated through the equation below. This is the final step of the MUSCL-Hancock scheme, and is repeated for each consecutive time step.
+\begin{equation}
+    \Phi_{i,j}^{n+1} = \Phi_{i,j}^n + \frac{\Delta t}{\Delta x} \left( \begin{bmatrix}
+    \rho u_j \\[4pt]
+    \rho u_i u_j \\[4pt]
+    \rho u_j^2 + P \\[4pt]
+    u_j(E + P)
+    \end{bmatrix}_{i-\frac{1}{2}} - \begin{bmatrix}
+    \rho u_j \\[4pt]
+    \rho u_i u_j \\[4pt]
+    \rho u_j^2 + P \\[4pt]
+    u_j(E + P)
+    \end{bmatrix}_{i+\frac{1}{2}} \right) + \frac{\Delta t}{\Delta y} \left( \begin{bmatrix}
+    \rho u_i \\[4pt]
+    \rho u_i^2 + P \\[4pt]
+    \rho u_i u_j \\[4pt]
+    u_i(E + P)
+    \end{bmatrix}_{j-\frac{1}{2}} - \begin{bmatrix}
+    \rho u_i \\[4pt]
+    \rho u_i^2 + P \\[4pt]
+    \rho u_i u_j \\[4pt]
+    u_i(E + P)
+    \end{bmatrix}_{i+\frac{1}{2}} \right)
+\end{equation}
+\\ \textbf{Chemical Source Term Evaluation}
+The chemistry is solved in the second fractional step for a homogeneous system
+\begin{equation*}
+    \left.
+    \begin{aligned}
+        \textrm{ODE}&: \; \frac{d \Phi}{d t} = \textbf{S} (\Phi) \\
+        \textrm{IC}&: \; \overline{\Phi}^{\, n+1}
+    \end{aligned}
+    \right\} \rightarrowtriangle \Phi^{\, n+1}
+\end{equation*}
+The two steps are denoted by operator $\textbf{T}^{(t)}$ (for transport) and operator $\textbf{S}^{(t)}$ (chemical source), respectively. Based on the above splitting, the solution can be evolved from its initial value $\Phi^n$ at time $t^n$, by one time step of size $\Delta t$, to a value $\Phi^{n+1}$ at time
+$t^{n+1} = t^n + \Delta t$,
+$$\Phi^{n+1} = \textbf{S}^{\Delta t} \, \textbf{T}^{\Delta t} (\Phi^n)$$
+The above procedure for solving the inhomogeneous system is exceedingly simple but only has first-order accuracy in time, when $S$ and $C$ are at least first-order accurate solution operators. A scheme with second-order accuracy in time called Strang splitting is 
+$$\Phi^{n+1} = \textbf{S}^{\Delta t / 2} \, \textbf{T}^{\Delta t} \, \textbf{S}^{\Delta t / 2} (\Phi^n)$$
+where $\textbf{S}$ and $\textbf{T}$ are at least second-order accurate solution operators in time.
+For the $\textbf{S}$ operator, the mass fraction of species are updated by using the \texttt{CVODE} solver. Note that the density $\rho$, momentum $\rho u$, and total energy $E$ remain constant during updating the mass fraction of all the species, after which the temperature $T$ is solved according to the definition of total energy:
+$$F(T) = R_0 T / \overline{M} - u^2 / 2 - h + E / \rho = 0$$
+where the equation of state $\rho = \sum \rho_i = P \overline{M} / R_0 T$ is utilized to eliminate the pressure term. The above equation can be solved numerically by using the Newton iteration method and the
+updated temperature at each iteration step is
+$$T^\textrm{new} = T^\textrm{old} - F(T^\textrm{old})/(R_0 / \overline{M} - c_P)$$
+\textbf{Entropy Generation}
+While the inlet-to-outlet mass flow ratio is one way to assess the quality of the solution, it is not always reliable. The flow field can be incorrect despite a ratio near unity. Entropy generation in the system can be computed as a better measure of accuracy.  The total entropy change across the system, that is, between the inlet and outlet, can be estimated using the mean static temperature and pressure values from the inlet and summing the entropy across each $j$ line \cite{Tucker2016}.
+\begin{equation*}
+    \Delta s = \sum_{j_{outlet}} c_p \cdot \ln{\Big(\frac{T_{j,outlet}}{\overline{T}_{static,inlet}}\Big)} - R \cdot \ln{\Big(\frac{P_{j,outlet}}{\overline{P}_{static,inlet}}\Big)}
+\end{equation*}
+Entropy generation can also be evaluated between each grid point. This is under the assumption that entropy is being advected along the $j$ lines, like streamlines.
+\begin{equation*}
+\label{eq:entropy_grid}
+    \Delta s_{i,j} = c_p \cdot \ln{\Big(\frac{T_{i,j}}{T_{i-1,j}}\Big)} - R \cdot \ln{\Big(\frac{P_{i,j}}{P_{i-1,j}}\Big)}
+\end{equation*}
+\textbf{Grid Generation and Load Balancing} For single-level calculations, \texttt{AMReX} provides the flexibility to have different size grids, more than one grid per \texttt{MPI} rank, and different strategies for distributing the grids to \texttt{MPI} ranks. For multi-level calculations, the same principles for load balancing apply as in single-level calculations, but there is additional complexity in how to tag cells for refinement and how to create the union of grids at levels greater than 0 where that union most likely does not cover the computational domain. The process of load balancing is typically independent of the process of grid creation; the inputs to load balancing are a given set of grids with a set of weights assigned to each grid.
+\\ \\ \noindent
+Single-level load balancing algorithms are sequentially applied to each AMR level independently, and the resulting distributions are mapped onto the ranks taking into account the weights already assigned to them (assign heaviest set of grids to the least loaded rank). Note that the load of each process is measured by how much memory has already been allocated, not how much memory will be allocated. Distribution options supported by \texttt{AMReX} include the following (the default is SFC):
+\begin{itemize}
+    \item \textbf{Knapsack}: the default weight of a grid in the knapsack algorithm is the number of grid cells, but \texttt{AMReX} supports the option to pass an array of weights--one per grid--or alternatively to pass in a MultiFab of weights per cell which is used to compute the weight per grid.
+    \item \textbf{SFC}: enumerate grids with a space-filling Z-morton curve, then partition the resulting ordering across ranks in a way that balances the load.
+    \item \textbf{Round-robin}: sort grids and assign them to ranks in round-robin fashion--specifically FAB $i$ is owned by CPU $i \in N$ where $N$ is the total number of \texttt{MPI} ranks.
+\end{itemize}
+
+
+\bibliographystyle{unsrt}
+\bibliography{citations}
+
+
+\end{document}
