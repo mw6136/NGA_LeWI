@@ -1,0 +1,39 @@
+README
+======
+
+This is a small example of an application that runs MPI with DLB and the TALP
+module.
+
+This application simulates a small imbalanced MPI workload. The TALP API is
+used to obtain the Useful and MPI time every few iterations and print them.
+
+Compilation
+-----------
+Check that the Makefile paths are correct and run `make all`.
+
+Execution
+---------
+* Edit the script 'run.sh'
+    * Check that the variables detected at configure time are correct
+    * Review the variables to be modified by the user and change them as you like
+
+* Run the script 'run.sh'
+* The main program, `talp_01`, will launch 2 MPI processes, each one will print
+  the statistics of its execution.
+* The application simulates a load imbalance. The rank will always be the last one
+  to arrive at the MPI Barriers.
+* The other program, `get_times`, can be invoked while the main program is running
+  to obtain the Useful and MPI times of the application. This application needs
+  a PID as argument.
+
+You can change the values of DLB and TRACE variables to modify the script behaviour.
+The TRACE option assumes that the EXTRAE_HOME environment variable points to a
+Extrae installation. This option will generate a tracefile.prv which can be opened
+using the PARAVER application.
+
+
+References
+----------
+If you don't know about EXTRAE and PARAVER and want to test the tracing capabilities
+of the example program you can download the sources and pre-built binaries at:
+* https://tools.bsc.es/downloads

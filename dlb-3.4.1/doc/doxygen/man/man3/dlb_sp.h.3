@@ -1,0 +1,918 @@
+.TH "dlb_sp.h" 3 "Fri Aug 16 2024" "Version 3.4.1" "Dynamic Load Balance" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dlb_sp.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'dlb_types\&.h'\fP
+.br
+\fC#include 'dlb_errors\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBdlb_handler_t\fP \fBDLB_Init_sp\fP (int ncpus, \fBconst_dlb_cpu_set_t\fP mask, const char *dlb_args)"
+.br
+.RI "Initialize DLB library and all its internal data structures\&. "
+.ti -1c
+.RI "int \fBDLB_Finalize_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Finalize DLB library and clean up all its data structures for the specified handler\&. Must be called once by each created handler before exiting the system\&. "
+.ti -1c
+.RI "int \fBDLB_Enable_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Enable DLB and all its features in case it was previously disabled, otherwise it has no effect\&. "
+.ti -1c
+.RI "int \fBDLB_Disable_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Disable DLB actions for the specified handler\&. "
+.ti -1c
+.RI "int \fBDLB_SetMaxParallelism_sp\fP (\fBdlb_handler_t\fP handler, int max)"
+.br
+.RI "Set the maximum number of resources to be used by the handler\&. "
+.ti -1c
+.RI "int \fBDLB_UnsetMaxParallelism_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Unset the maximum number of resources to be used by the handler\&. "
+.ti -1c
+.RI "int \fBDLB_CallbackSet_sp\fP (\fBdlb_handler_t\fP handler, \fBdlb_callbacks_t\fP which, \fBdlb_callback_t\fP callback, void *arg)"
+.br
+.RI "Setter for DLB callbacks\&. "
+.ti -1c
+.RI "int \fBDLB_CallbackGet_sp\fP (\fBdlb_handler_t\fP handler, \fBdlb_callbacks_t\fP which, \fBdlb_callback_t\fP *callback, void **arg)"
+.br
+.RI "Getter for DLB callbacks\&. "
+.ti -1c
+.RI "int \fBDLB_Lend_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Lend all the current CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_LendCpu_sp\fP (\fBdlb_handler_t\fP handler, int cpuid)"
+.br
+.RI "Lend a specific CPU\&. "
+.ti -1c
+.RI "int \fBDLB_LendCpus_sp\fP (\fBdlb_handler_t\fP handler, int ncpus)"
+.br
+.RI "Lend a specific amount of CPUs, only useful for systems that do not work with cpu masks\&. "
+.ti -1c
+.RI "int \fBDLB_LendCpuMask_sp\fP (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Lend a set of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_Reclaim_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Reclaim all the CPUs that are owned by the subprocess\&. "
+.ti -1c
+.RI "int \fBDLB_ReclaimCpu_sp\fP (\fBdlb_handler_t\fP handler, int cpuid)"
+.br
+.RI "Reclaim a specific CPU that are owned by the subprocess\&. "
+.ti -1c
+.RI "int \fBDLB_ReclaimCpus_sp\fP (\fBdlb_handler_t\fP handler, int ncpus)"
+.br
+.RI "Reclaim a specific amount of CPUs that are owned by the subprocess\&. "
+.ti -1c
+.RI "int \fBDLB_ReclaimCpuMask_sp\fP (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Reclaim a set of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_AcquireCpu_sp\fP (\fBdlb_handler_t\fP handler, int cpuid)"
+.br
+.RI "Acquire a specific CPU\&. "
+.ti -1c
+.RI "int \fBDLB_AcquireCpus_sp\fP (\fBdlb_handler_t\fP handler, int ncpus)"
+.br
+.RI "Acquire a specific amount of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_AcquireCpuMask_sp\fP (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Acquire a set of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_AcquireCpusInMask_sp\fP (\fBdlb_handler_t\fP handler, int ncpus, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Acquire some CPUs from a subset of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_Borrow_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Borrow all the possible CPUs registered on DLB\&. "
+.ti -1c
+.RI "int \fBDLB_BorrowCpu_sp\fP (\fBdlb_handler_t\fP handler, int cpuid)"
+.br
+.RI "Borrow a specific CPU\&. "
+.ti -1c
+.RI "int \fBDLB_BorrowCpus_sp\fP (\fBdlb_handler_t\fP handler, int ncpus)"
+.br
+.RI "Borrow a specific amount of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_BorrowCpuMask_sp\fP (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Borrow a set of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_BorrowCpusInMask_sp\fP (\fBdlb_handler_t\fP handler, int ncpus, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Borrow some CPUs from a subset of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_Return_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Return claimed CPUs of other subprocesses\&. "
+.ti -1c
+.RI "int \fBDLB_ReturnCpu_sp\fP (\fBdlb_handler_t\fP handler, int cpuid)"
+.br
+.RI "Return the specific CPU if it has been reclaimed\&. "
+.ti -1c
+.RI "int \fBDLB_ReturnCpuMask_sp\fP (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Return a set of CPUs if some of them have been reclaimed\&. "
+.ti -1c
+.RI "int \fBDLB_PollDROM_sp\fP (\fBdlb_handler_t\fP handler, int *ncpus, \fBdlb_cpu_set_t\fP mask)"
+.br
+.RI "Poll DROM module to check if the subprocess needs to adapt to a new mask or number of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_PollDROM_Update_sp\fP (\fBdlb_handler_t\fP handler)"
+.br
+.RI "Poll DROM module to check if the subprocess needs to adapt to a new mask and update it if necessary using the registered callbacks\&. "
+.ti -1c
+.RI "int \fBDLB_CheckCpuAvailability_sp\fP (\fBdlb_handler_t\fP handler, int cpuid)"
+.br
+.RI "Check whether the specified CPU is being used by another subprocess\&. "
+.ti -1c
+.RI "int \fBDLB_SetVariable_sp\fP (\fBdlb_handler_t\fP handler, const char *variable, const char *value)"
+.br
+.RI "Change the value of a DLB internal variable\&. "
+.ti -1c
+.RI "int \fBDLB_GetVariable_sp\fP (\fBdlb_handler_t\fP handler, const char *variable, char *value)"
+.br
+.RI "Query the value of a DLB internal variable\&. "
+.ti -1c
+.RI "int \fBDLB_PrintVariables_sp\fP (\fBdlb_handler_t\fP handler, int print_extended)"
+.br
+.RI "Print DLB internal variables\&. "
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "\fBdlb_handler_t\fP DLB_Init_sp (int ncpus, \fBconst_dlb_cpu_set_t\fP mask, const char * dlb_args)"
+
+.PP
+Initialize DLB library and all its internal data structures\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP optional, initial number of CPUs, or 0 
+.br
+\fImask\fP optional, initial CPU mask to register, or NULL 
+.br
+\fIdlb_args\fP optional parameter to overwrite DLB_ARGS options, or NULL 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+dlb_handler to use on subsequent DLB calls
+.RE
+.PP
+Parameters \fCncpus\fP and \fCmask\fP are used to register CPUs owned by the calling subprocess into the system\&. DLB advanced usage requires mask information so it is recommended to provide a CPU mask, but DLB also accepts an integer in case the program does not have the mask affinity details\&. Parameter \fCdlb_args\fP can be used in conjunction with DLB_ARGS, the former takes precedence in case of conflicting options\&. 
+.SS "int DLB_Finalize_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Finalize DLB library and clean up all its data structures for the specified handler\&. Must be called once by each created handler before exiting the system\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.RE
+.PP
+
+.SS "int DLB_Enable_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Enable DLB and all its features in case it was previously disabled, otherwise it has no effect\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if DLB is already enabled
+.RE
+.PP
+It can be used in conjunction with \fBDLB_Disable()\fP to delimit sections of the code where DLB calls will not have effect\&. 
+.SS "int DLB_Disable_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Disable DLB actions for the specified handler\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if DLB is already disabled
+.RE
+.PP
+This call resets the original resources for the subprocess and returns any external CPU it may be using at that time\&. While DLB is disabled there will not be any resource sharing for this subprocess\&. 
+.SS "int DLB_SetMaxParallelism_sp (\fBdlb_handler_t\fP handler, int max)"
+
+.PP
+Set the maximum number of resources to be used by the handler\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fImax\fP max number of CPUs 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success
+.RE
+.PP
+Used to delimit sections of the code that the developer knows that only a maximum number of CPUs can benefit the execution\&. If a subprocess reaches its maximum number of resources used at any time, subsequent calls to borrow CPUs will be ignored until some of them are returned\&. If the maximum number of CPUs exceeds the current number of assigned CPUs at the time of this function call, DLB will readjust as needed\&. 
+.SS "int DLB_UnsetMaxParallelism_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Unset the maximum number of resources to be used by the handler\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success
+.RE
+.PP
+Unset the maximum number of CPUs previously assigned to this subprocess\&. Subsequent calls to borrow will not be delimited by this parameter\&. 
+.SS "int DLB_CallbackSet_sp (\fBdlb_handler_t\fP handler, \fBdlb_callbacks_t\fP which, \fBdlb_callback_t\fP callback, void * arg)"
+
+.PP
+Setter for DLB callbacks\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIwhich\fP callback type 
+.br
+\fIcallback\fP function pointer to register 
+.br
+\fIarg\fP opaque argument to pass in each callback invocation 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOCBK if the callback type does not exist
+.RE
+.PP
+Register a new \fCcallback\fP for the callback type \fCwhich\fP\&. The callback type comes predefined by the enum values of \fBdlb_callbacks_t\fP\&. It is highly recommended to register at least callbacks for \fBdlb_callback_enable_cpu\fP and \fBdlb_callback_disable_cpu\fP\&. 
+.SS "int DLB_CallbackGet_sp (\fBdlb_handler_t\fP handler, \fBdlb_callbacks_t\fP which, \fBdlb_callback_t\fP * callback, void ** arg)"
+
+.PP
+Getter for DLB callbacks\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIwhich\fP callback type 
+.br
+\fIcallback\fP registered callback function for the specified callback type 
+.br
+\fIarg\fP opaque argument to pass in each callback invocation 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOCBK if the callback type does not exist
+.RE
+.PP
+Obtain the previously registered \fCcallback\fP and \fCarg\fP for the specified \fCwhich\fP callback type\&. 
+.SS "int DLB_Lend_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Lend all the current CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Lend CPUs of the subprocess to the system\&. A lent CPU may be assigned to other subprocess that demands more resources\&. If the CPU was originally owned by the subprocess it may be reclaimed\&. 
+.SS "int DLB_LendCpu_sp (\fBdlb_handler_t\fP handler, int cpuid)"
+
+.PP
+Lend a specific CPU\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIcpuid\fP CPU id to lend 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Lend CPUs of the subprocess to the system\&. A lent CPU may be assigned to other subprocess that demands more resources\&. If the CPU was originally owned by the subprocess it may be reclaimed\&. 
+.SS "int DLB_LendCpus_sp (\fBdlb_handler_t\fP handler, int ncpus)"
+
+.PP
+Lend a specific amount of CPUs, only useful for systems that do not work with cpu masks\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIncpus\fP number of CPUs to lend 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Lend CPUs of the subprocess to the system\&. A lent CPU may be assigned to other subprocess that demands more resources\&. If the CPU was originally owned by the subprocess it may be reclaimed\&. 
+.SS "int DLB_LendCpuMask_sp (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Lend a set of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fImask\fP CPU mask to lend 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Lend CPUs of the subprocess to the system\&. A lent CPU may be assigned to other subprocess that demands more resources\&. If the CPU was originally owned by the subprocess it may be reclaimed\&. 
+.SS "int DLB_Reclaim_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Reclaim all the CPUs that are owned by the subprocess\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if there is no CPUs to reclaim 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Reclaim CPUs that were previously lent\&. It is mandatory that the CPUs belong to the calling subprocess\&. 
+.SS "int DLB_ReclaimCpu_sp (\fBdlb_handler_t\fP handler, int cpuid)"
+
+.PP
+Reclaim a specific CPU that are owned by the subprocess\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIcpuid\fP CPU id to reclaim 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if there is no CPUs to reclaim 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be reclaimed
+.RE
+.PP
+Reclaim CPUs that were previously lent\&. It is mandatory that the CPUs belong to the calling subprocess\&. 
+.SS "int DLB_ReclaimCpus_sp (\fBdlb_handler_t\fP handler, int ncpus)"
+
+.PP
+Reclaim a specific amount of CPUs that are owned by the subprocess\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIncpus\fP Number of CPUs to reclaim 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if there is no CPUs to reclaim 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Reclaim CPUs that were previously lent\&. It is mandatory that the CPUs belong to the calling subprocess\&. 
+.SS "int DLB_ReclaimCpuMask_sp (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Reclaim a set of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fImask\fP CPU mask to reclaim 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if there is no CPUs to reclaim 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be reclaimed
+.RE
+.PP
+Reclaim CPUs that were previously lent\&. It is mandatory that the CPUs belong to the calling subprocess\&. 
+.SS "int DLB_AcquireCpu_sp (\fBdlb_handler_t\fP handler, int cpuid)"
+
+.PP
+Acquire a specific CPU\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIcpuid\fP CPU to acquire 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if the CPU is already acquired 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be acquired 
+.PP
+DLB_ERR_REQST if there are too many requests for this resource
+.RE
+.PP
+Acquire CPUs from the system\&. If the CPU belongs to the subprocess the call is equivalent to a \fIreclaim\fP action\&. Otherwise the subprocess attempts to acquire a specific CPU in case it is available or enqueue a request if it's not\&. 
+.SS "int DLB_AcquireCpus_sp (\fBdlb_handler_t\fP handler, int ncpus)"
+
+.PP
+Acquire a specific amount of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIncpus\fP Number of CPUs to acquire 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if cannot acquire any CPU 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_REQST if there are too many requests for this resource
+.RE
+.PP
+Acquire CPUs from the system\&. If the CPU belongs to the subprocess the call is equivalent to a \fIreclaim\fP action\&. Otherwise the subprocess attempts to acquire a specific CPU in case it is available or enqueue a request if it's not\&. 
+.SS "int DLB_AcquireCpuMask_sp (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Acquire a set of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fImask\fP CPU set to acquire 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if cannot acquire any CPU 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be acquired 
+.PP
+DLB_ERR_REQST if there are too many requests for these resources
+.RE
+.PP
+Acquire CPUs from the system\&. If the CPU belongs to the subprocess the call is equivalent to a \fIreclaim\fP action\&. Otherwise the subprocess attempts to acquire a specific CPU in case it is available or enqueue a request if it's not\&. 
+.SS "int DLB_AcquireCpusInMask_sp (\fBdlb_handler_t\fP handler, int ncpus, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Acquire some CPUs from a subset of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIncpus\fP Number of CPUs to acquire 
+.br
+\fImask\fP CPU set to acquire from 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if cannot acquire any CPU 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be acquired 
+.PP
+DLB_ERR_REQST if there are too many requests for these resources
+.RE
+.PP
+Acquire CPUs from the system\&. If the CPU belongs to the process the call is equivalent to a \fIreclaim\fP action\&. Otherwise the process attempts to acquire a specific CPU in case it is available or enqueue a request if it's not\&. 
+.SS "int DLB_Borrow_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Borrow all the possible CPUs registered on DLB\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if cannot borrow any resources 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_BorrowCpu_sp (\fBdlb_handler_t\fP handler, int cpuid)"
+
+.PP
+Borrow a specific CPU\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIcpuid\fP cpu CPU to borrow 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if CPU cannot borrowed 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_BorrowCpus_sp (\fBdlb_handler_t\fP handler, int ncpus)"
+
+.PP
+Borrow a specific amount of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIncpus\fP Number of CPUs to borrow 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if cannot borrow any resources 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_BorrowCpuMask_sp (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Borrow a set of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fImask\fP CPU set to borrow 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if cannot borrow any resources 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_BorrowCpusInMask_sp (\fBdlb_handler_t\fP handler, int ncpus, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Borrow some CPUs from a subset of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIncpus\fP Number of CPUs to borrow 
+.br
+\fImask\fP CPU set to borrow from 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if cannot borrow any resources 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_Return_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Return claimed CPUs of other subprocesses\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be returned
+.RE
+.PP
+Return CPUs to the system commonly triggered by a reclaim action from other subprocess but stating that the current subprocess still demands the usage of these CPUs\&. This action will enqueue a request for when the resources are available again\&. If the caller does not want to keep the resource after receiving a \fIreclaim\fP, the correct action is \fIlend\fP\&. 
+.SS "int DLB_ReturnCpu_sp (\fBdlb_handler_t\fP handler, int cpuid)"
+
+.PP
+Return the specific CPU if it has been reclaimed\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIcpuid\fP CPU to return 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be returned
+.RE
+.PP
+Return CPUs to the system commonly triggered by a reclaim action from other subprocess but stating that the current subprocess still demands the usage of these CPUs\&. This action will enqueue a request for when the resources are available again\&. If the caller does not want to keep the resource after receiving a \fIreclaim\fP, the correct action is \fIlend\fP\&. 
+.SS "int DLB_ReturnCpuMask_sp (\fBdlb_handler_t\fP handler, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Return a set of CPUs if some of them have been reclaimed\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fImask\fP CPU set to return 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be returned
+.RE
+.PP
+Return CPUs to the system commonly triggered by a reclaim action from other subprocess but stating that the current subprocess still demands the usage of these CPUs\&. This action will enqueue a request for when the resources are available again\&. If the caller does not want to keep the resource after receiving a \fIreclaim\fP, the correct action is \fIlend\fP\&. 
+.SS "int DLB_PollDROM_sp (\fBdlb_handler_t\fP handler, int * ncpus, \fBdlb_cpu_set_t\fP mask)"
+
+.PP
+Poll DROM module to check if the subprocess needs to adapt to a new mask or number of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIncpus\fP optional, variable to receive the new number of CPUs 
+.br
+\fImask\fP optional, variable to receive the new mask 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if no update id needed 
+.PP
+DLB_ERR_NOCOMP if DROM is not enabled (option --drom)
+.RE
+.PP
+If DROM is enabled and the interaction mode is not asynchronous, this function can be called to poll the status of the CPU ownership\&. 
+.SS "int DLB_PollDROM_Update_sp (\fBdlb_handler_t\fP handler)"
+
+.PP
+Poll DROM module to check if the subprocess needs to adapt to a new mask and update it if necessary using the registered callbacks\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if no update id needed 
+.PP
+DLB_ERR_NOCOMP if DROM is not enabled (option --drom)
+.RE
+.PP
+Same as \fBDLB_PollDROM()\fP, but calling the registered callbacks to update the ownership info instead of returning the data by argument\&. 
+.SS "int DLB_CheckCpuAvailability_sp (\fBdlb_handler_t\fP handler, int cpuid)"
+
+.PP
+Check whether the specified CPU is being used by another subprocess\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIcpuid\fP CPU to be checked 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS if the CPU is available 
+.PP
+DLB_NOTED if the CPU is owned but still guested by other process 
+.PP
+DLB_NOUPDT if the CPU is owned but still not reclaimed 
+.PP
+DLB_ERR_PERM if the CPU cannot be acquired or has been disabled 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.RE
+.PP
+
+.SS "int DLB_SetVariable_sp (\fBdlb_handler_t\fP handler, const char * variable, const char * value)"
+
+.PP
+Change the value of a DLB internal variable\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIvariable\fP Internal variable to set 
+.br
+\fIvalue\fP New value 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_PERM if the variable is readonly 
+.PP
+DLB_ERR_NOENT if the variable does not exist
+.RE
+.PP
+Set a DLB internal variable\&. These variables are the same ones specified in DLB_ARGS, although not all of them can be modified at runtime\&. If the variable is readonly the setter function will return an error\&. 
+.SS "int DLB_GetVariable_sp (\fBdlb_handler_t\fP handler, const char * variable, char * value)"
+
+.PP
+Query the value of a DLB internal variable\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIvariable\fP Internal variable to set 
+.br
+\fIvalue\fP Current DLB variable value 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOENT if the variable does not exist
+.RE
+.PP
+Get a DLB internal variable\&. See \fBDLB_SetVariable()\fP\&. 
+.SS "int DLB_PrintVariables_sp (\fBdlb_handler_t\fP handler, int print_extended)"
+
+.PP
+Print DLB internal variables\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandler\fP subprocess identifier 
+.br
+\fIprint_extended\fP If different to 0, print all options, including experimental, and its description 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Dynamic Load Balance from the source code\&.

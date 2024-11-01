@@ -1,0 +1,54 @@
+/*********************************************************************************/
+/*  Copyright 2009-2021 Barcelona Supercomputing Center                          */
+/*                                                                               */
+/*  This file is part of the DLB library.                                        */
+/*                                                                               */
+/*  DLB is free software: you can redistribute it and/or modify                  */
+/*  it under the terms of the GNU Lesser General Public License as published by  */
+/*  the Free Software Foundation, either version 3 of the License, or            */
+/*  (at your option) any later version.                                          */
+/*                                                                               */
+/*  DLB is distributed in the hope that it will be useful,                       */
+/*  but WITHOUT ANY WARRANTY; without even the implied warranty of               */
+/*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                */
+/*  GNU Lesser General Public License for more details.                          */
+/*                                                                               */
+/*  You should have received a copy of the GNU Lesser General Public License     */
+/*  along with DLB.  If not, see <https://www.gnu.org/licenses/>.                */
+/*********************************************************************************/
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef MPI_LIB
+
+#include "LB_MPI/MPI_interfaceF.h"
+#include "support/debug.h"
+
+#include <mpi.h>
+
+// pmpi headers
+#pragma pygen start
+void p{MPI_LCASE}({F_PARAMS}) __attribute__((weak));
+#pragma pygen end
+
+#pragma GCC visibility push(default)
+
+// mpi intercept
+#pragma pygen start
+void {MPI_LCASE}({F_PARAMS}) {{
+    verbose(VB_MPI_INT, ">> {MPI_NAME}...............");
+    DLB_{MPI_NAME}_F_enter({F_ARG_LIST});
+    p{MPI_LCASE}({F_ARG_LIST});
+    DLB_{MPI_NAME}_F_leave();
+    verbose(VB_MPI_INT, "<< {MPI_NAME}...............");
+}}
+void {MPI_LCASE}_ ({F_PARAMS}) __attribute__((alias("{MPI_LCASE}")));
+void {MPI_LCASE}__ ({F_PARAMS}) __attribute__((alias("{MPI_LCASE}")));
+
+#pragma pygen end
+
+#pragma GCC visibility pop
+
+#endif /* MPI_LIB */

@@ -1,0 +1,61 @@
+.TH "dlb_taskset" 1 "Fri Aug 16 2024" "Version 3.4.1" "Dynamic Load Balance" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dlb_taskset \- Manage CPU affinity of DLB applications\&. 
+
+.SH "SYNOPSIS"
+.PP
+\fBdlb_taskset\fP --list[=\fInum_columns\fP] [--pid \fIpid\fP] 
+.br
+\fBdlb_taskset\fP --set \fIcpu_list\fP --pid \fIpid\fP 
+.br
+\fBdlb_taskset\fP --set \fIcpu_list\fP [--borrow] \fIapplication\fP 
+.br
+\fBdlb_taskset\fP --remove \fIcpu_list\fP [--pid \fIpid\fP] 
+.br
+\fBdlb_taskset\fP --getpid \fIid\fP 
+.SH "DESCRIPTION"
+.PP
+The command \fBdlb_taskset\fP can manage the CPU affinity of any DLB running process or new applications\&. The command can list the existing processes or modify the current CPU affinity\&.
+.PP
+Note that the utility does not only changes the CPU pinning of each thread but also forces the process to communicate with the underlying programming model runtime to modify the number of running threads\&.
+.PP
+Possible operations: 
+.IP "\fB-l, --list[=\fInum_columns\fP] \fP" 1c
+List the CPU affinity of all DLB processes as well as other information about its mask status\&. The operation accepts an optional parameter \fInum_columns\fP to specify the maximum number of columns to be shown in the output, by default this number depends on the screen width\&. If \fB--pid\fP \fIpid\fP is provided, show only the current affinity mask of that process\&.
+.PP
+.IP "\fB-s, --set, -c, --cpus \fIcpu_list\fP \fP" 1c
+Set a new CPU affinity mask as specified in \fIcpu_list\fP for an existing DLB process or a new one\&. This operation needs either a --pid \fIpid\fP or an \fIapplication\fP\&. If some CPU in the list is previously owned by other DLB process, remove first\&. See \fBCPU_LIST FORMAT\fP\&.
+.PP
+.IP "\fB-r, --remove \fIcpu_list\fP \fP" 1c
+Remove all CPUs specified in \fIcpu_list\fP from any DLB process that currently owns that CPU\&. If a --pid \fIpid\fP is provided, only act on that process\&. See \fBCPU_LIST FORMAT\fP\&. 
+.PP
+.IP "\fB-g, --getpid \fIid\fP \fP" 1c
+Obtain the system Process ID of a given DLB internal \fIid\fP\&. Note that it is not possible to obtain the DLB internal ID of a process so the usage of this option is discouraged, although it is kept for internal usage\&. 
+.PP
+.SH "OPTIONS"
+.PP
+.IP "\fB-p, --pid \fIpid\fP \fP" 1c
+Act only on the given \fIpid\fP\&.
+.PP
+.IP "\fB-b, --borrow \fP" 1c
+Only valid when \fBdlb_taskset\fP launches a new application\&. This flag tells DLB to borrow CPUs instead of stealing them\&. This means that if any CPU was removed from any other process due to this action and assigned to the new process, that CPU will be returned, if possible, to the original owner when the application ends\&. 
+.br
+\fBNote:\fP By default, if this option is not selected, CPUs stolen and assigned to new applications will never be returned to their original owners\&.
+.PP
+.IP "\fB--color[=\fIWHEN\fP] \fP" 1c
+Colorize the output; \fIWHEN\fP can be 'yes'/'always' (default if parameter is omitted), 'auto' (default if option is omitted), or 'no'/'never'\&.
+.PP
+.IP "\fB-h, --help \fP" 1c
+Display this help\&. 
+.PP
+.SH "CPU_LIST FORMAT"
+.PP
+The \fIcpu_list\fP argument can be either a human readable list or range of decimal values, e\&.g\&.: '0,5-7', or a hexadecimal or binary mask where the first CPU is the least significant bit, e\&.g\&.: '0xE1' or '0b11100001'\&. In all the examples above the argument means CPUs with logical id #0, #5, #6, #7\&.
+.SH "AUTHOR"
+.PP
+Barcelona Supercomputing Center (dlb@bsc.es) 
+.SH "SEE ALSO"
+.PP
+\fBdlb\fP(1), \fBdlb_run\fP(1), \fBdlb_shm\fP(1) 

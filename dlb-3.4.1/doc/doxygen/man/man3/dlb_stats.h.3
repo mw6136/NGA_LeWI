@@ -1,0 +1,357 @@
+.TH "dlb_stats.h" 3 "Fri Aug 16 2024" "Version 3.4.1" "Dynamic Load Balance" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dlb_stats.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBDLB_Stats_Init\fP (void)"
+.br
+.RI "Initialize DLB Statistics Module\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_Finalize\fP (void)"
+.br
+.RI "Finalize DLB Statistics Module\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetNumCpus\fP (int *ncpus)"
+.br
+.RI "Get the total number of available CPUs in the node\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetPidList\fP (int *pidlist, int *nelems, int max_len)"
+.br
+.RI "Get the PID's attached to this module\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetCpuUsage\fP (int pid, double *usage)"
+.br
+.RI "Get the CPU Usage of the given PID\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetCpuAvgUsage\fP (int pid, double *usage)"
+.br
+.RI "Get the CPU Average Usage of the given PID\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetCpuUsageList\fP (double *usagelist, int *nelems, int max_len)"
+.br
+.RI "Get the CPU usage of all the attached PIDs\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetCpuAvgUsageList\fP (double *avgusagelist, int *nelems, int max_len)"
+.br
+.RI "Get the CPU Average usage of all the attached PIDs\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetNodeUsage\fP (double *usage)"
+.br
+.RI "Get the CPU Usage of all the DLB processes in the node\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetNodeAvgUsage\fP (double *usage)"
+.br
+.RI "Get the CPU Average Usage of all the DLB processes in the node\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetActiveCpus\fP (int pid, int *ncpus)"
+.br
+.RI "Get the number of CPUs assigned to a given process\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetActiveCpusList\fP (int *cpuslist, int *nelems, int max_len)"
+.br
+.RI "Get the number of CPUs assigned to each process\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetLoadAvg\fP (int pid, double *load)"
+.br
+.RI "Get the Load Average of a given process\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetCpuStateIdle\fP (int cpu, float *percentage)"
+.br
+.RI "Get the percentage of time that the CPU has been in state IDLE\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetCpuStateOwned\fP (int cpu, float *percentage)"
+.br
+.RI "Get the percentage of time that the CPU has been in state OWNED\&. "
+.ti -1c
+.RI "int \fBDLB_Stats_GetCpuStateGuested\fP (int cpu, float *percentage)"
+.br
+.RI "Get the percentage of time that the CPU has been in state GUESTED\&. "
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "int DLB_Stats_Init (void)"
+
+.PP
+Initialize DLB Statistics Module\&. 
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_Finalize (void)"
+
+.PP
+Finalize DLB Statistics Module\&. 
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetNumCpus (int * ncpus)"
+
+.PP
+Get the total number of available CPUs in the node\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP the number of CPUs 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetPidList (int * pidlist, int * nelems, int max_len)"
+
+.PP
+Get the PID's attached to this module\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpidlist\fP The output list 
+.br
+\fInelems\fP Number of elements in the list 
+.br
+\fImax_len\fP Max capacity of the list 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetCpuUsage (int pid, double * usage)"
+
+.PP
+Get the CPU Usage of the given PID\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpid\fP PID to consult 
+.br
+\fIusage\fP the CPU usage of the given PID, or -1\&.0 if not found 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetCpuAvgUsage (int pid, double * usage)"
+
+.PP
+Get the CPU Average Usage of the given PID\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpid\fP PID to consult 
+.br
+\fIusage\fP the CPU usage of the given PID, or -1\&.0 if not found 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetCpuUsageList (double * usagelist, int * nelems, int max_len)"
+
+.PP
+Get the CPU usage of all the attached PIDs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIusagelist\fP The output list 
+.br
+\fInelems\fP Number of elements in the list 
+.br
+\fImax_len\fP Max capacity of the list 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetCpuAvgUsageList (double * avgusagelist, int * nelems, int max_len)"
+
+.PP
+Get the CPU Average usage of all the attached PIDs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIavgusagelist\fP The output list 
+.br
+\fInelems\fP Number of elements in the list 
+.br
+\fImax_len\fP Max capacity of the list 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetNodeUsage (double * usage)"
+
+.PP
+Get the CPU Usage of all the DLB processes in the node\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIusage\fP the Node Usage 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetNodeAvgUsage (double * usage)"
+
+.PP
+Get the CPU Average Usage of all the DLB processes in the node\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIusage\fP the Node Usage 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetActiveCpus (int pid, int * ncpus)"
+
+.PP
+Get the number of CPUs assigned to a given process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpid\fP Process ID to consult 
+.br
+\fIncpus\fP the number of CPUs used by a process 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetActiveCpusList (int * cpuslist, int * nelems, int max_len)"
+
+.PP
+Get the number of CPUs assigned to each process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpuslist\fP The output list 
+.br
+\fInelems\fP Number of elements in the list 
+.br
+\fImax_len\fP Max capacity of the list 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetLoadAvg (int pid, double * load)"
+
+.PP
+Get the Load Average of a given process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpid\fP Process ID to consult 
+.br
+\fIload\fP double[3] Load Average ( 1min 5min 15min ) 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetCpuStateIdle (int cpu, float * percentage)"
+
+.PP
+Get the percentage of time that the CPU has been in state IDLE\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpu\fP CPU id 
+.br
+\fIpercentage\fP percentage of state/total 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetCpuStateOwned (int cpu, float * percentage)"
+
+.PP
+Get the percentage of time that the CPU has been in state OWNED\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpu\fP CPU id 
+.br
+\fIpercentage\fP percentage of state/total 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SS "int DLB_Stats_GetCpuStateGuested (int cpu, float * percentage)"
+
+.PP
+Get the percentage of time that the CPU has been in state GUESTED\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpu\fP CPU id 
+.br
+\fIpercentage\fP percentage of state/total 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+error code 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Dynamic Load Balance from the source code\&.

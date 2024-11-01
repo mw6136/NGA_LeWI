@@ -1,0 +1,87 @@
+.TH "dlb_errors.h" 3 "Fri Aug 16 2024" "Version 3.4.1" "Dynamic Load Balance" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dlb_errors.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBDLBErrorCodes\fP {  }"
+.br
+.in -1c
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBDLBErrorCodes\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDLB_NOUPDT \fP\fP
+The requested operation does not need any action 
+.TP
+\fB\fIDLB_NOTED \fP\fP
+The operation cannot be performed now, but it has been attended 
+.TP
+\fB\fIDLB_SUCCESS \fP\fP
+Success 
+.TP
+\fB\fIDLB_ERR_UNKNOWN \fP\fP
+Unknown error 
+.TP
+\fB\fIDLB_ERR_NOINIT \fP\fP
+DLB has not been initialized 
+.TP
+\fB\fIDLB_ERR_INIT \fP\fP
+DLB is already initialized 
+.TP
+\fB\fIDLB_ERR_DISBLD \fP\fP
+DLB is disabled 
+.TP
+\fB\fIDLB_ERR_NOSHMEM \fP\fP
+DLB cannot find a shared memory 
+.TP
+\fB\fIDLB_ERR_NOPROC \fP\fP
+DLB cannot find the requested process 
+.TP
+\fB\fIDLB_ERR_PDIRTY \fP\fP
+DLB cannot update the target process, operation still in process 
+.TP
+\fB\fIDLB_ERR_PERM \fP\fP
+DLB cannot acquire the requested resource 
+.TP
+\fB\fIDLB_ERR_TIMEOUT \fP\fP
+The operation has timed out 
+.TP
+\fB\fIDLB_ERR_NOCBK \fP\fP
+The callback is not defined and cannot be invoked 
+.TP
+\fB\fIDLB_ERR_NOENT \fP\fP
+The queried entry does not exist 
+.TP
+\fB\fIDLB_ERR_NOCOMP \fP\fP
+The operation is not compatible with the configured DLB options 
+.br
+ 
+.TP
+\fB\fIDLB_ERR_REQST \fP\fP
+DLB cannot take more requests for a specific resource 
+.TP
+\fB\fIDLB_ERR_NOMEM \fP\fP
+DLB cannot allocate more processes into the shared memory 
+.TP
+\fB\fIDLB_ERR_NOPOL \fP\fP
+The operation is not defined in the current polic 
+.TP
+\fB\fIDLB_ERR_NOTALP \fP\fP
+TALP is not initialized 
+.TP
+\fB\fIDLB_ERR_NOLEWI \fP\fP
+LeWI is not initialized 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Dynamic Load Balance from the source code\&.

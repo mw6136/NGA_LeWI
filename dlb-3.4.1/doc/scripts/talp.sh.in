@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# Description:
+#   Execute an application with TALP enabled.
+#   Note that DLB needs to be initialized in some way, either by linking
+#   the application, or preloading a DLB library.
+#   With TALP, typically an MPI based library will be needed to intercept
+#   MPI calls.
+#
+# Usage:
+#   ./talp.sh <application> <args>
+
+#################################################################################
+### DLB options                                                               ###
+#################################################################################
+
+# Enable TALP
+export DLB_ARGS="$DLB_ARGS --talp"
+
+# Select which TALP summary to show
+# {none:all:pop-metrics:pop-raw:node:process}, default: pop-metrics
+#export DLB_ARGS="$DLB_ARGS --talp-summary=pop-metrics:process:regions"
+
+# Enable PAPI counters
+#export DLB_ARGS="$DLB_ARGS --talp-papi"
+
+# Write TALP metrics to file. Accepted formats: *.json, *.xml, *.csv.
+# Any other for plain text.
+#export DLB_ARGS="$DLB_ARGS --talp-output-file=talp.json"
+
+#################################################################################
+### Run                                                                       ###
+#################################################################################
+
+if [[ -z $DLB_HOME ]] ; then
+    export DLB_HOME="@prefix@"
+fi
+
+# If the application is not linked with DLB, select which DLB version to preload.
+# Preloading libdlb_mpi.so should work most of the time, as it will intercept
+# both C/C++ and Fortran MPI.
+#preload="$DLB_HOME/lib/libdlb.so"
+preload="$DLB_HOME/lib/libdlb_mpi.so"
+#preload="$DLB_HOME/lib/libdlb_mpic.so"
+#preload="$DLB_HOME/lib/libdlb_mpif.so"
+
+env LD_PRELOAD="$LD_PRELOAD:$preload" "$@"

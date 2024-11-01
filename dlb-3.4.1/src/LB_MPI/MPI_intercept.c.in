@@ -1,0 +1,49 @@
+/*********************************************************************************/
+/*  Copyright 2009-2021 Barcelona Supercomputing Center                          */
+/*                                                                               */
+/*  This file is part of the DLB library.                                        */
+/*                                                                               */
+/*  DLB is free software: you can redistribute it and/or modify                  */
+/*  it under the terms of the GNU Lesser General Public License as published by  */
+/*  the Free Software Foundation, either version 3 of the License, or            */
+/*  (at your option) any later version.                                          */
+/*                                                                               */
+/*  DLB is distributed in the hope that it will be useful,                       */
+/*  but WITHOUT ANY WARRANTY; without even the implied warranty of               */
+/*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                */
+/*  GNU Lesser General Public License for more details.                          */
+/*                                                                               */
+/*  You should have received a copy of the GNU Lesser General Public License     */
+/*  along with DLB.  If not, see <https://www.gnu.org/licenses/>.                */
+/*********************************************************************************/
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef MPI_LIB
+
+#include "LB_MPI/MPI_interface.h"
+#include "support/debug.h"
+
+#include <mpi.h>
+#include <stdio.h>
+
+
+#pragma GCC visibility push(default)
+
+#pragma pygen start
+int {MPI_NAME}({C_PARAMS}) {{
+    verbose(VB_MPI_INT, ">> {MPI_NAME}...............");
+    DLB_{MPI_NAME}_enter({C_ARG_LIST});
+    int res = P{MPI_NAME}({C_ARG_LIST});
+    DLB_{MPI_NAME}_leave();
+    verbose(VB_MPI_INT, "<< {MPI_NAME}...............");
+    return res;
+}}
+
+#pragma pygen end
+
+#pragma GCC visibility pop
+
+#endif /* MPI_LIB */

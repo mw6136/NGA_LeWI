@@ -1,0 +1,418 @@
+.TH "dlb_talp.h" 3 "Fri Aug 16 2024" "Version 3.4.1" "Dynamic Load Balance" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dlb_talp.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <time\&.h>\fP
+.br
+\fC#include <stdint\&.h>\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBdlb_monitor_t\fP"
+.br
+.ti -1c
+.RI "struct \fBdlb_pop_metrics_t\fP"
+.br
+.ti -1c
+.RI "struct \fBdlb_node_metrics_t\fP"
+.br
+.ti -1c
+.RI "struct \fBdlb_node_times_t\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBDLB_MPI_REGION\fP   NULL"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum { \fBDLB_MONITOR_NAME_MAX\fP = 128 }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBDLB_TALP_Attach\fP (void)"
+.br
+.RI "Attach current process to DLB system as TALP administrator\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_Detach\fP (void)"
+.br
+.RI "Detach current process from DLB system\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_GetNumCPUs\fP (int *ncpus)"
+.br
+.RI "Get the number of CPUs in the node\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_GetPidList\fP (int *pidlist, int *nelems, int max_len)"
+.br
+.RI "Get the list of running processes registered in the DLB system\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_GetTimes\fP (int pid, double *mpi_time, double *useful_time)"
+.br
+.RI "Get the CPU time spent on MPI and useful computation for the given process\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_GetNodeTimes\fP (const char *name, \fBdlb_node_times_t\fP *node_times_list, int *nelems, int max_len)"
+.br
+.RI "Get the list of raw times for the specified region\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_QueryPOPNodeMetrics\fP (const char *name, \fBdlb_node_metrics_t\fP *node_metrics)"
+.br
+.RI "From either 1st or 3rd party, query node metrics for one region\&. "
+.ti -1c
+.RI "const \fBdlb_monitor_t\fP * \fBDLB_MonitoringRegionGetMPIRegion\fP (void)"
+.br
+.RI "Get the pointer of the implicit MPI Monitoring Region\&. "
+.ti -1c
+.RI "\fBdlb_monitor_t\fP * \fBDLB_MonitoringRegionRegister\fP (const char *name)"
+.br
+.RI "Register a new Monitoring Region\&. "
+.ti -1c
+.RI "int \fBDLB_MonitoringRegionReset\fP (\fBdlb_monitor_t\fP *handle)"
+.br
+.RI "Reset monitoring region\&. "
+.ti -1c
+.RI "int \fBDLB_MonitoringRegionStart\fP (\fBdlb_monitor_t\fP *handle)"
+.br
+.RI "Start (or unpause) monitoring region\&. "
+.ti -1c
+.RI "int \fBDLB_MonitoringRegionStop\fP (\fBdlb_monitor_t\fP *handle)"
+.br
+.RI "Stop (or pause) monitoring region\&. "
+.ti -1c
+.RI "int \fBDLB_MonitoringRegionReport\fP (const \fBdlb_monitor_t\fP *handle)"
+.br
+.RI "Print a report to stderr of the monitoring region\&. "
+.ti -1c
+.RI "int \fBDLB_MonitoringRegionsUpdate\fP (void)"
+.br
+.RI "Update all monitoring regions\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_CollectPOPMetrics\fP (\fBdlb_monitor_t\fP *monitor, \fBdlb_pop_metrics_t\fP *pop_metrics)"
+.br
+.RI "Perform an MPI collective communication to collect POP metrics\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_CollectPOPNodeMetrics\fP (\fBdlb_monitor_t\fP *monitor, \fBdlb_node_metrics_t\fP *node_metrics)"
+.br
+.RI "Perform a node collective communication to collect TALP node metrics\&. "
+.ti -1c
+.RI "int \fBDLB_TALP_CollectNodeMetrics\fP (\fBdlb_monitor_t\fP *monitor, \fBdlb_node_metrics_t\fP *node_metrics) __attribute__((deprecated('DLB_TALP_CollectPOPNodeMetrics')))"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define DLB_MPI_REGION   NULL"
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "anonymous enum"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDLB_MONITOR_NAME_MAX \fP\fP
+.SH "Function Documentation"
+.PP 
+.SS "int DLB_TALP_Attach (void)"
+
+.PP
+Attach current process to DLB system as TALP administrator\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success
+.RE
+.PP
+Once the process is attached to DLB as TALP administrator, it may perform the below actions described in this file\&. This way, the process is able to obtain some TALP values such as time spent in computation or MPI for each of the DLB running processes\&. 
+.SS "int DLB_TALP_Detach (void)"
+
+.PP
+Detach current process from DLB system\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOSHMEM if cannot find shared memory to detach from
+.RE
+.PP
+If previously attached, a process must call this function to correctly close file descriptors and clean data\&. 
+.SS "int DLB_TALP_GetNumCPUs (int * ncpus)"
+
+.PP
+Get the number of CPUs in the node\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP the number of CPUs 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.RE
+.PP
+
+.SS "int DLB_TALP_GetPidList (int * pidlist, int * nelems, int max_len)"
+
+.PP
+Get the list of running processes registered in the DLB system\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpidlist\fP The output list 
+.br
+\fInelems\fP Number of elements in the list 
+.br
+\fImax_len\fP Max capacity of the list 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOSHMEM if cannot find shared memory 
+.RE
+.PP
+
+.SS "int DLB_TALP_GetTimes (int pid, double * mpi_time, double * useful_time)"
+
+.PP
+Get the CPU time spent on MPI and useful computation for the given process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpid\fP target Process ID 
+.br
+\fImpi_time\fP CPU time spent on MPI in seconds 
+.br
+\fIuseful_time\fP CPU time spend on useful computation in seconds 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOPROC if target pid is not registered in the DLB system 
+.RE
+.PP
+
+.SS "int DLB_TALP_GetNodeTimes (const char * name, \fBdlb_node_times_t\fP * node_times_list, int * nelems, int max_len)"
+
+.PP
+Get the list of raw times for the specified region\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Name to identify the region 
+.br
+\fInode_times_list\fP The output list 
+.br
+\fInelems\fP Number of elements in the list 
+.br
+\fImax_len\fP Max capacity of the list 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOSHMEM if cannot find shared memory 
+.RE
+.PP
+
+.SS "int DLB_TALP_QueryPOPNodeMetrics (const char * name, \fBdlb_node_metrics_t\fP * node_metrics)"
+
+.PP
+From either 1st or 3rd party, query node metrics for one region\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Name to identify the region 
+.br
+\fInode_metrics\fP Allocated structure where the collected metrics will be stored 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOENT if no data for the given name
+.RE
+.PP
+If called from a third party, this function requires the application to run with DLB_ARGS+=' --talp-external-profiler' 
+.SS "const \fBdlb_monitor_t\fP * DLB_MonitoringRegionGetMPIRegion (void)"
+
+.PP
+Get the pointer of the implicit MPI Monitoring Region\&. DISCLAIMER: The functions declared above are intended to be called from 1st-party or 3rd-party programs indistinctly; that is, DLB applications, or external profilers as long as they invoke DLB_TALP_Attach\&.
+.PP
+The functions declared below are intended to be called only from 1st-party programs, and they should return an error if they are called from external profilers\&.
+.PP
+This header file may be split in two in the next major release\&.
+.PP
+\fBReturns\fP
+.RS 4
+monitor handle to be used on queries, or NULL if TALP is not enabled 
+.RE
+.PP
+
+.SS "\fBdlb_monitor_t\fP * DLB_MonitoringRegionRegister (const char * name)"
+
+.PP
+Register a new Monitoring Region\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIname\fP Name to identify the new region 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+monitor handle to be used on subsequent calls, or NULL if TALP is not enabled 
+.RE
+.PP
+
+.SS "int DLB_MonitoringRegionReset (\fBdlb_monitor_t\fP * handle)"
+
+.PP
+Reset monitoring region\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandle\fP Monitoring handle that identifies the region, or DLB_MPI_REGION 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOTALP if TALP is not enabled 
+.RE
+.PP
+
+.SS "int DLB_MonitoringRegionStart (\fBdlb_monitor_t\fP * handle)"
+
+.PP
+Start (or unpause) monitoring region\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandle\fP Monitoring handle that identifies the region, or DLB_MPI_REGION 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOTALP if TALP is not enabled 
+.RE
+.PP
+
+.SS "int DLB_MonitoringRegionStop (\fBdlb_monitor_t\fP * handle)"
+
+.PP
+Stop (or pause) monitoring region\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandle\fP Monitoring handle that identifies the region, or DLB_MPI_REGION 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOTALP if TALP is not enabled 
+.RE
+.PP
+
+.SS "int DLB_MonitoringRegionReport (const \fBdlb_monitor_t\fP * handle)"
+
+.PP
+Print a report to stderr of the monitoring region\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIhandle\fP Monitoring handle that identifies the region, or DLB_MPI_REGION 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOTALP if TALP is not enabled 
+.RE
+.PP
+
+.SS "int DLB_MonitoringRegionsUpdate (void)"
+
+.PP
+Update all monitoring regions\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success
+.RE
+.PP
+Monitoring regions are only updated in certain situations, like when starting/stopping a region, or finalizing MPI\&. This routine forces the update of all started monitoring regions 
+.SS "int DLB_TALP_CollectPOPMetrics (\fBdlb_monitor_t\fP * monitor, \fBdlb_pop_metrics_t\fP * pop_metrics)"
+
+.PP
+Perform an MPI collective communication to collect POP metrics\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImonitor\fP Monitoring handle that identifies the region, or DLB_MPI_REGION macro (NULL) if implicit MPI region 
+.br
+\fIpop_metrics\fP Allocated structure where the collected metrics will be stored 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOTALP if TALP is not enabled 
+.RE
+.PP
+
+.SS "int DLB_TALP_CollectPOPNodeMetrics (\fBdlb_monitor_t\fP * monitor, \fBdlb_node_metrics_t\fP * node_metrics)"
+
+.PP
+Perform a node collective communication to collect TALP node metrics\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImonitor\fP Monitoring handle that identifies the region, or DLB_MPI_REGION macro (NULL) if implicit MPI region 
+.br
+\fInode_metrics\fP Allocated structure where the collected metrics will be stored 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOTALP if TALP is not enabled 
+.PP
+DLB_ERR_NOCOMP if support for barrier is disabled, i\&.e\&., --no-barrier
+.RE
+.PP
+This functions performs a node barrier to collect the data\&. All processes that are running in the node must invoke this function\&. 
+.SS "int DLB_TALP_CollectNodeMetrics (\fBdlb_monitor_t\fP * monitor, \fBdlb_node_metrics_t\fP * node_metrics)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Dynamic Load Balance from the source code\&.

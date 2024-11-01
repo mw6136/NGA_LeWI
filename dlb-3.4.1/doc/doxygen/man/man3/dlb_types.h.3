@@ -1,0 +1,149 @@
+.TH "dlb_types.h" 3 "Fri Aug 16 2024" "Version 3.4.1" "Dynamic Load Balance" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dlb_types.h
+.SH SYNOPSIS
+.br
+.PP
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef struct \fBdlb_barrier_t\fP \fBdlb_barrier_t\fP"
+.br
+.ti -1c
+.RI "typedef void * \fBdlb_handler_t\fP"
+.br
+.ti -1c
+.RI "typedef void * \fBdlb_cpu_set_t\fP"
+.br
+.ti -1c
+.RI "typedef const void * \fBconst_dlb_cpu_set_t\fP"
+.br
+.ti -1c
+.RI "typedef void(* \fBdlb_callback_t\fP) (void)"
+.br
+.ti -1c
+.RI "typedef void(* \fBdlb_callback_set_num_threads_t\fP) (int num_threads, void *arg)"
+.br
+.ti -1c
+.RI "typedef void(* \fBdlb_callback_set_active_mask_t\fP) (\fBconst_dlb_cpu_set_t\fP mask, void *arg)"
+.br
+.ti -1c
+.RI "typedef void(* \fBdlb_callback_set_process_mask_t\fP) (\fBconst_dlb_cpu_set_t\fP mask, void *arg)"
+.br
+.ti -1c
+.RI "typedef void(* \fBdlb_callback_add_active_mask_t\fP) (\fBconst_dlb_cpu_set_t\fP mask, void *arg)"
+.br
+.ti -1c
+.RI "typedef void(* \fBdlb_callback_add_process_mask_t\fP) (\fBconst_dlb_cpu_set_t\fP mask, void *arg)"
+.br
+.ti -1c
+.RI "typedef void(* \fBdlb_callback_enable_cpu_t\fP) (int cpuid, void *arg)"
+.br
+.ti -1c
+.RI "typedef void(* \fBdlb_callback_disable_cpu_t\fP) (int cpuid, void *arg)"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBdlb_drom_flags_t\fP { \fBDLB_STEAL_CPUS\fP = 1 << 0, \fBDLB_RETURN_STOLEN\fP = 1 << 1, \fBDLB_SYNC_QUERY\fP = 1 << 2, \fBDLB_SYNC_NOW\fP = 1 << 3, \fBDLB_NO_SYNC\fP = 1 << 4 }"
+.br
+.ti -1c
+.RI "enum \fBdlb_printshmem_flags_t\fP { \fBDLB_COLOR_AUTO\fP = 1, \fBDLB_COLOR_ALWAYS\fP = 2 }"
+.br
+.ti -1c
+.RI "enum \fBdlb_barrier_flags_t\fP { \fBDLB_BARRIER_LEWI_OFF\fP = 0, \fBDLB_BARRIER_LEWI_ON\fP = 1 << 0, \fBDLB_BARRIER_LEWI_RUNTIME\fP = 1 << 1 }"
+.br
+.ti -1c
+.RI "enum \fBdlb_callbacks_t\fP { \fBdlb_callback_set_num_threads\fP = 1, \fBdlb_callback_set_active_mask\fP = 2, \fBdlb_callback_set_process_mask\fP = 3, \fBdlb_callback_add_active_mask\fP = 4, \fBdlb_callback_add_process_mask\fP = 5, \fBdlb_callback_enable_cpu\fP = 6, \fBdlb_callback_disable_cpu\fP = 7 }"
+.br
+.in -1c
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef struct \fBdlb_barrier_t\fP \fBdlb_barrier_t\fP"
+
+.SS "typedef void* \fBdlb_handler_t\fP"
+
+.SS "typedef void* \fBdlb_cpu_set_t\fP"
+
+.SS "typedef const void* \fBconst_dlb_cpu_set_t\fP"
+
+.SS "typedef void(* dlb_callback_t) (void)"
+
+.SS "typedef void(* dlb_callback_set_num_threads_t) (int num_threads, void *arg)"
+
+.SS "typedef void(* dlb_callback_set_active_mask_t) (\fBconst_dlb_cpu_set_t\fP mask, void *arg)"
+
+.SS "typedef void(* dlb_callback_set_process_mask_t) (\fBconst_dlb_cpu_set_t\fP mask, void *arg)"
+
+.SS "typedef void(* dlb_callback_add_active_mask_t) (\fBconst_dlb_cpu_set_t\fP mask, void *arg)"
+
+.SS "typedef void(* dlb_callback_add_process_mask_t) (\fBconst_dlb_cpu_set_t\fP mask, void *arg)"
+
+.SS "typedef void(* dlb_callback_enable_cpu_t) (int cpuid, void *arg)"
+
+.SS "typedef void(* dlb_callback_disable_cpu_t) (int cpuid, void *arg)"
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBdlb_drom_flags_t\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDLB_STEAL_CPUS \fP\fP
+.TP
+\fB\fIDLB_RETURN_STOLEN \fP\fP
+.TP
+\fB\fIDLB_SYNC_QUERY \fP\fP
+.TP
+\fB\fIDLB_SYNC_NOW \fP\fP
+.TP
+\fB\fIDLB_NO_SYNC \fP\fP
+.SS "enum \fBdlb_printshmem_flags_t\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDLB_COLOR_AUTO \fP\fP
+.TP
+\fB\fIDLB_COLOR_ALWAYS \fP\fP
+.SS "enum \fBdlb_barrier_flags_t\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDLB_BARRIER_LEWI_OFF \fP\fP
+.TP
+\fB\fIDLB_BARRIER_LEWI_ON \fP\fP
+.TP
+\fB\fIDLB_BARRIER_LEWI_RUNTIME \fP\fP
+.SS "enum \fBdlb_callbacks_t\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIdlb_callback_set_num_threads \fP\fP
+.TP
+\fB\fIdlb_callback_set_active_mask \fP\fP
+.TP
+\fB\fIdlb_callback_set_process_mask \fP\fP
+.TP
+\fB\fIdlb_callback_add_active_mask \fP\fP
+.TP
+\fB\fIdlb_callback_add_process_mask \fP\fP
+.TP
+\fB\fIdlb_callback_enable_cpu \fP\fP
+.TP
+\fB\fIdlb_callback_disable_cpu \fP\fP
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Dynamic Load Balance from the source code\&.

@@ -1,0 +1,1166 @@
+.TH "dlb.h" 3 "Fri Aug 16 2024" "Version 3.4.1" "Dynamic Load Balance" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dlb.h
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'dlb_types\&.h'\fP
+.br
+\fC#include 'dlb_errors\&.h'\fP
+.br
+\fC#include <stdbool\&.h>\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBDLB_Init\fP (int ncpus, \fBconst_dlb_cpu_set_t\fP mask, const char *dlb_args)"
+.br
+.RI "Initialize DLB library and all its internal data structures\&. Must be called once and only once by each process in the DLB system\&. "
+.ti -1c
+.RI "int \fBDLB_Finalize\fP (void)"
+.br
+.RI "Finalize DLB library and clean up all its data structures\&. Must be called by each process before exiting the system\&. "
+.ti -1c
+.RI "int \fBDLB_PreInit\fP (\fBconst_dlb_cpu_set_t\fP mask, char ***next_environ)"
+.br
+.RI "Pre-Initialize process\&. "
+.ti -1c
+.RI "int \fBDLB_Enable\fP (void)"
+.br
+.RI "Enable DLB and all its features in case it was previously disabled, otherwise it has no effect\&. "
+.ti -1c
+.RI "int \fBDLB_Disable\fP (void)"
+.br
+.RI "Disable DLB actions for the calling process\&. "
+.ti -1c
+.RI "int \fBDLB_SetMaxParallelism\fP (int max)"
+.br
+.RI "Set the maximum number of resources to be used by the calling process\&. "
+.ti -1c
+.RI "int \fBDLB_UnsetMaxParallelism\fP (void)"
+.br
+.RI "Unset the maximum number of resources to be used by the calling process\&. "
+.ti -1c
+.RI "int \fBDLB_CallbackSet\fP (\fBdlb_callbacks_t\fP which, \fBdlb_callback_t\fP callback, void *arg)"
+.br
+.RI "Setter for DLB callbacks\&. "
+.ti -1c
+.RI "int \fBDLB_CallbackGet\fP (\fBdlb_callbacks_t\fP which, \fBdlb_callback_t\fP *callback, void **arg)"
+.br
+.RI "Getter for DLB callbacks\&. "
+.ti -1c
+.RI "int \fBDLB_Lend\fP (void)"
+.br
+.RI "Lend all the current CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_LendCpu\fP (int cpuid)"
+.br
+.RI "Lend a specific CPU\&. "
+.ti -1c
+.RI "int \fBDLB_LendCpus\fP (int ncpus)"
+.br
+.RI "Lend a specific amount of CPUs, only useful for systems that do not work with cpu masks\&. "
+.ti -1c
+.RI "int \fBDLB_LendCpuMask\fP (\fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Lend a set of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_Reclaim\fP (void)"
+.br
+.RI "Reclaim all the CPUs that are owned by the process\&. "
+.ti -1c
+.RI "int \fBDLB_ReclaimCpu\fP (int cpuid)"
+.br
+.RI "Reclaim a specific CPU that are owned by the process\&. "
+.ti -1c
+.RI "int \fBDLB_ReclaimCpus\fP (int ncpus)"
+.br
+.RI "Reclaim a specific amount of CPUs that are owned by the process\&. "
+.ti -1c
+.RI "int \fBDLB_ReclaimCpuMask\fP (\fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Reclaim a set of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_AcquireCpu\fP (int cpuid)"
+.br
+.RI "Acquire a specific CPU\&. "
+.ti -1c
+.RI "int \fBDLB_AcquireCpus\fP (int ncpus)"
+.br
+.RI "Acquire a specific amount of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_AcquireCpuMask\fP (\fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Acquire a set of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_AcquireCpusInMask\fP (int ncpus, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Acquire some CPUs from a subset of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_Borrow\fP (void)"
+.br
+.RI "Borrow all the possible CPUs registered on DLB\&. "
+.ti -1c
+.RI "int \fBDLB_BorrowCpu\fP (int cpuid)"
+.br
+.RI "Borrow a specific CPU\&. "
+.ti -1c
+.RI "int \fBDLB_BorrowCpus\fP (int ncpus)"
+.br
+.RI "Borrow a specific amount of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_BorrowCpuMask\fP (\fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Borrow a set of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_BorrowCpusInMask\fP (int ncpus, \fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Borrow some CPUs from a subset of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_Return\fP (void)"
+.br
+.RI "Return claimed CPUs of other processes\&. "
+.ti -1c
+.RI "int \fBDLB_ReturnCpu\fP (int cpuid)"
+.br
+.RI "Return the specific CPU if it has been reclaimed\&. "
+.ti -1c
+.RI "int \fBDLB_ReturnCpuMask\fP (\fBconst_dlb_cpu_set_t\fP mask)"
+.br
+.RI "Return a set of CPUs if some of them have been reclaimed\&. "
+.ti -1c
+.RI "int \fBDLB_PollDROM\fP (int *ncpus, \fBdlb_cpu_set_t\fP mask)"
+.br
+.RI "Poll DROM module to check if the process needs to adapt to a new mask or number of CPUs\&. "
+.ti -1c
+.RI "int \fBDLB_PollDROM_Update\fP (void)"
+.br
+.RI "Poll DROM module to check if the process needs to adapt to a new mask and update it if necessary using the registered callbacks\&. "
+.ti -1c
+.RI "int \fBDLB_CheckCpuAvailability\fP (int cpuid)"
+.br
+.RI "Check whether the specified CPU is being used by another process\&. "
+.ti -1c
+.RI "int \fBDLB_Barrier\fP (void)"
+.br
+.RI "Perform a DLB Barrier among processes in the node\&. "
+.ti -1c
+.RI "int \fBDLB_BarrierAttach\fP (void)"
+.br
+.RI "Attach process to the DLB Barrier team\&. "
+.ti -1c
+.RI "int \fBDLB_BarrierDetach\fP (void)"
+.br
+.RI "Detach process from the DLB Barrier team\&. "
+.ti -1c
+.RI "\fBdlb_barrier_t\fP * \fBDLB_BarrierNamedRegister\fP (const char *barrier_name, \fBdlb_barrier_flags_t\fP flags)"
+.br
+.RI "Register, or obtain, a named barrier\&. "
+.ti -1c
+.RI "\fBdlb_barrier_t\fP * \fBDLB_BarrierNamedGet\fP (const char *barrier_name, \fBdlb_barrier_flags_t\fP flags)"
+.br
+.RI "Register, or obtain, a named barrier\&. "
+.ti -1c
+.RI "int \fBDLB_BarrierNamed\fP (\fBdlb_barrier_t\fP *barrier)"
+.br
+.RI "Perform a DLB Barrier using the named barrier among processes in the node\&. "
+.ti -1c
+.RI "int \fBDLB_BarrierNamedAttach\fP (\fBdlb_barrier_t\fP *barrier)"
+.br
+.RI "Attach process to the named barrier team\&. "
+.ti -1c
+.RI "int \fBDLB_BarrierNamedDetach\fP (\fBdlb_barrier_t\fP *barrier)"
+.br
+.RI "Detach process from the named barrier team\&. "
+.ti -1c
+.RI "int \fBDLB_SetVariable\fP (const char *variable, const char *value)"
+.br
+.RI "Change the value of a DLB internal variable\&. "
+.ti -1c
+.RI "int \fBDLB_GetVariable\fP (const char *variable, char *value)"
+.br
+.RI "Query the value of a DLB internal variable\&. "
+.ti -1c
+.RI "int \fBDLB_PrintVariables\fP (int print_extended)"
+.br
+.RI "Print DLB internal variables\&. "
+.ti -1c
+.RI "int \fBDLB_PrintShmem\fP (int num_columns, \fBdlb_printshmem_flags_t\fP print_flags)"
+.br
+.RI "Print the data stored in the shmem\&. "
+.ti -1c
+.RI "const char * \fBDLB_Strerror\fP (int errnum)"
+.br
+.RI "Obtain a pointer to a string that describes the error code passed by argument\&. "
+.ti -1c
+.RI "int \fBDLB_SetObserverRole\fP (bool thread_is_observer)"
+.br
+.RI "Modify the current thread DLB role to either observer or particpant\&. "
+.ti -1c
+.RI "int \fBDLB_AutoSizerStart\fP (void) __attribute__((deprecated))"
+.br
+.ti -1c
+.RI "int \fBDLB_AutoSizerEnd\fP (void) __attribute__((deprecated))"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "int DLB_Init (int ncpus, \fBconst_dlb_cpu_set_t\fP mask, const char * dlb_args)"
+
+.PP
+Initialize DLB library and all its internal data structures\&. Must be called once and only once by each process in the DLB system\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP optional, initial number of CPUs, or 0 
+.br
+\fImask\fP optional, initial CPU mask to register, or NULL 
+.br
+\fIdlb_args\fP optional parameter to overwrite DLB_ARGS options, or NULL 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_INIT if DLB is already initialized 
+.PP
+DLB_ERR_PERM if DLB cannot register the mask passed by argument 
+.PP
+DLB_ERR_NOMEM if DLB cannot allocate more processes 
+.PP
+DLB_ERR_NOCOMP if initialization options are incompatible
+.RE
+.PP
+Parameters \fCncpus\fP and \fCmask\fP are used to register CPUs owned by the calling process into the system\&. DLB advanced usage requires mask information so it is recommended to provide a CPU mask, but DLB also accepts an integer in case the program does not have the mask affinity details\&. Parameter \fCdlb_args\fP can be used in conjunction with DLB_ARGS, the former takes precedence in case of conflicting options\&. 
+.SS "int DLB_Finalize (void)"
+
+.PP
+Finalize DLB library and clean up all its data structures\&. Must be called by each process before exiting the system\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if DLB is not initialized 
+.RE
+.PP
+
+.SS "int DLB_PreInit (\fBconst_dlb_cpu_set_t\fP mask, char *** next_environ)"
+
+.PP
+Pre-Initialize process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImask\fP initial CPU mask to register 
+.br
+\fInext_environ\fP environment to modify if the process is going to fork-exec 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_PERM if DLB cannot register the mask passed by argument 
+.PP
+DLB_ERR_NOMEM if DLB cannot allocate more processes 
+.RE
+.PP
+
+.SS "int DLB_Enable (void)"
+
+.PP
+Enable DLB and all its features in case it was previously disabled, otherwise it has no effect\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if DLB is already enabled 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized
+.RE
+.PP
+It can be used in conjunction with \fBDLB_Disable()\fP to delimit sections of the code where DLB calls will not have effect\&. 
+.SS "int DLB_Disable (void)"
+
+.PP
+Disable DLB actions for the calling process\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if DLB is already disabled 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized
+.RE
+.PP
+This call resets the original resources for the process and returns any external CPU it may be using at that time\&. While DLB is disabled there will not be any resource sharing for this process\&. 
+.SS "int DLB_SetMaxParallelism (int max)"
+
+.PP
+Set the maximum number of resources to be used by the calling process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImax\fP max number of CPUs 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized
+.RE
+.PP
+Used to delimit sections of the code that the developer knows that only a maximum number of CPUs can benefit the execution\&. If a process reaches its maximum number of resources used at any time, subsequent calls to borrow CPUs will be ignored until some of them are returned\&. If the maximum number of CPUs exceeds the current number of assigned CPUs at the time of this function call, DLB will readjust as needed\&. 
+.SS "int DLB_UnsetMaxParallelism (void)"
+
+.PP
+Unset the maximum number of resources to be used by the calling process\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized
+.RE
+.PP
+Unset the maximum number of CPUs previously assigned to this process\&. Subsequent calls to borrow will not be delimited by this parameter\&. 
+.SS "int DLB_CallbackSet (\fBdlb_callbacks_t\fP which, \fBdlb_callback_t\fP callback, void * arg)"
+
+.PP
+Setter for DLB callbacks\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIwhich\fP callback type 
+.br
+\fIcallback\fP function pointer to register 
+.br
+\fIarg\fP opaque argument to pass in each callback invocation 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOCBK if the callback type does not exist
+.RE
+.PP
+Register a new \fCcallback\fP for the callback type \fCwhich\fP\&. The callback type comes predefined by the enum values of \fBdlb_callbacks_t\fP\&. It is highly recommended to register at least callbacks for \fBdlb_callback_enable_cpu\fP and \fBdlb_callback_disable_cpu\fP\&. 
+.SS "int DLB_CallbackGet (\fBdlb_callbacks_t\fP which, \fBdlb_callback_t\fP * callback, void ** arg)"
+
+.PP
+Getter for DLB callbacks\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIwhich\fP callback type 
+.br
+\fIcallback\fP registered callback function for the specified callback type 
+.br
+\fIarg\fP opaque argument to pass in each callback invocation 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOCBK if the callback type does not exist
+.RE
+.PP
+Obtain the previously registered \fCcallback\fP and \fCarg\fP for the specified \fCwhich\fP callback type\&. 
+.SS "int DLB_Lend (void)"
+
+.PP
+Lend all the current CPUs\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Lend CPUs of the process to the system\&. A lent CPU may be assigned to other process that demands more resources\&. If the CPU was originally owned by the process it may be reclaimed\&. 
+.SS "int DLB_LendCpu (int cpuid)"
+
+.PP
+Lend a specific CPU\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpuid\fP CPU id to lend 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Lend CPUs of the process to the system\&. A lent CPU may be assigned to other process that demands more resources\&. If the CPU was originally owned by the process it may be reclaimed\&. 
+.SS "int DLB_LendCpus (int ncpus)"
+
+.PP
+Lend a specific amount of CPUs, only useful for systems that do not work with cpu masks\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP number of CPUs to lend 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Lend CPUs of the process to the system\&. A lent CPU may be assigned to other process that demands more resources\&. If the CPU was originally owned by the process it may be reclaimed\&. 
+.SS "int DLB_LendCpuMask (\fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Lend a set of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImask\fP CPU mask to lend 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Lend CPUs of the process to the system\&. A lent CPU may be assigned to other process that demands more resources\&. If the CPU was originally owned by the process it may be reclaimed\&. 
+.SS "int DLB_Reclaim (void)"
+
+.PP
+Reclaim all the CPUs that are owned by the process\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if there is no CPUs to reclaim 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Reclaim CPUs that were previously lent\&. It is mandatory that the CPUs belong to the calling process\&. 
+.SS "int DLB_ReclaimCpu (int cpuid)"
+
+.PP
+Reclaim a specific CPU that are owned by the process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpuid\fP CPU id to reclaim 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if there is no CPUs to reclaim 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be reclaimed
+.RE
+.PP
+Reclaim CPUs that were previously lent\&. It is mandatory that the CPUs belong to the calling process\&. 
+.SS "int DLB_ReclaimCpus (int ncpus)"
+
+.PP
+Reclaim a specific amount of CPUs that are owned by the process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP Number of CPUs to reclaim 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if there is no CPUs to reclaim 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Reclaim CPUs that were previously lent\&. It is mandatory that the CPUs belong to the calling process\&. 
+.SS "int DLB_ReclaimCpuMask (\fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Reclaim a set of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImask\fP CPU mask to reclaim 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if there is no CPUs to reclaim 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be reclaimed
+.RE
+.PP
+Reclaim CPUs that were previously lent\&. It is mandatory that the CPUs belong to the calling process\&. 
+.SS "int DLB_AcquireCpu (int cpuid)"
+
+.PP
+Acquire a specific CPU\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpuid\fP CPU to acquire 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if the CPU is already acquired 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be acquired 
+.PP
+DLB_ERR_REQST if there are too many requests for this resource
+.RE
+.PP
+Acquire CPUs from the system\&. If the CPU belongs to the process the call is equivalent to a \fIreclaim\fP action\&. Otherwise the process attempts to acquire a specific CPU in case it is available or enqueue a request if it's not\&. 
+.SS "int DLB_AcquireCpus (int ncpus)"
+
+.PP
+Acquire a specific amount of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP Number of CPUs to acquire 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if cannot acquire any CPU 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_REQST if there are too many requests for this resource
+.RE
+.PP
+Acquire CPUs from the system\&. If the CPU belongs to the process the call is equivalent to a \fIreclaim\fP action\&. Otherwise the process attempts to acquire a specific CPU in case it is available or enqueue a request if it's not\&. 
+.SS "int DLB_AcquireCpuMask (\fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Acquire a set of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImask\fP CPU set to acquire 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if cannot acquire any CPU 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be acquired 
+.PP
+DLB_ERR_REQST if there are too many requests for these resources
+.RE
+.PP
+Acquire CPUs from the system\&. If the CPU belongs to the process the call is equivalent to a \fIreclaim\fP action\&. Otherwise the process attempts to acquire a specific CPU in case it is available or enqueue a request if it's not\&. 
+.SS "int DLB_AcquireCpusInMask (int ncpus, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Acquire some CPUs from a subset of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP Number of CPUs to acquire 
+.br
+\fImask\fP CPU set to acquire from 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOTED if the petition cannot be immediately fulfilled 
+.PP
+DLB_NOUPDT if cannot acquire any CPU 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be acquired 
+.PP
+DLB_ERR_REQST if there are too many requests for these resources
+.RE
+.PP
+Acquire CPUs from the system\&. If the CPU belongs to the process the call is equivalent to a \fIreclaim\fP action\&. Otherwise the process attempts to acquire a specific CPU in case it is available or enqueue a request if it's not\&. 
+.SS "int DLB_Borrow (void)"
+
+.PP
+Borrow all the possible CPUs registered on DLB\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if cannot borrow any resources 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_BorrowCpu (int cpuid)"
+
+.PP
+Borrow a specific CPU\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpuid\fP cpu CPU to borrow 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if CPU cannot borrowed 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_BorrowCpus (int ncpus)"
+
+.PP
+Borrow a specific amount of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP Number of CPUs to borrow 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if cannot borrow any resources 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_BorrowCpuMask (\fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Borrow a set of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImask\fP CPU set to borrow 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if cannot borrow any resources 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_BorrowCpusInMask (int ncpus, \fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Borrow some CPUs from a subset of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP Number of CPUs to borrow 
+.br
+\fImask\fP CPU set to borrow from 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if cannot borrow any resources 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled
+.RE
+.PP
+Borrow CPUs from the system only if they are idle\&. No other action is done if the CPU is not available\&. 
+.SS "int DLB_Return (void)"
+
+.PP
+Return claimed CPUs of other processes\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if no need to return 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be returned
+.RE
+.PP
+Return CPUs to the system commonly triggered by a reclaim action from other process but stating that the current process still demands the usage of these CPUs\&. This action will enqueue a request for when the resources are available again\&. If the caller does not want to keep the resource after receiving a \fIreclaim\fP, the correct action is \fIlend\fP\&. 
+.SS "int DLB_ReturnCpu (int cpuid)"
+
+.PP
+Return the specific CPU if it has been reclaimed\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpuid\fP CPU to return 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOINIT if DLB is not initialized 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be returned
+.RE
+.PP
+Return CPUs to the system commonly triggered by a reclaim action from other process but stating that the current process still demands the usage of these CPUs\&. This action will enqueue a request for when the resources are available again\&. If the caller does not want to keep the resource after receiving a \fIreclaim\fP, the correct action is \fIlend\fP\&. 
+.SS "int DLB_ReturnCpuMask (\fBconst_dlb_cpu_set_t\fP mask)"
+
+.PP
+Return a set of CPUs if some of them have been reclaimed\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImask\fP CPU set to return 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.PP
+DLB_ERR_PERM if the resources cannot be returned
+.RE
+.PP
+Return CPUs to the system commonly triggered by a reclaim action from other process but stating that the current process still demands the usage of these CPUs\&. This action will enqueue a request for when the resources are available again\&. If the caller does not want to keep the resource after receiving a \fIreclaim\fP, the correct action is \fIlend\fP\&. 
+.SS "int DLB_PollDROM (int * ncpus, \fBdlb_cpu_set_t\fP mask)"
+
+.PP
+Poll DROM module to check if the process needs to adapt to a new mask or number of CPUs\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIncpus\fP optional, variable to receive the new number of CPUs 
+.br
+\fImask\fP optional, variable to receive the new mask 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if no update id needed 
+.PP
+DLB_ERR_NOCOMP if DROM is not enabled (option --drom)
+.RE
+.PP
+If DROM is enabled and the interaction mode is not asynchronous, this function can be called to poll the status of the CPU ownership\&. 
+.SS "int DLB_PollDROM_Update (void)"
+
+.PP
+Poll DROM module to check if the process needs to adapt to a new mask and update it if necessary using the registered callbacks\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if no update id needed 
+.PP
+DLB_ERR_NOCOMP if DROM is not enabled (option --drom)
+.RE
+.PP
+Same as \fBDLB_PollDROM()\fP, but calling the registered callbacks to update the ownership info instead of returning the data by argument\&. 
+.SS "int DLB_CheckCpuAvailability (int cpuid)"
+
+.PP
+Check whether the specified CPU is being used by another process\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcpuid\fP CPU to be checked 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS if the CPU is available 
+.PP
+DLB_NOTED if the CPU is owned but still guested by other process 
+.PP
+DLB_NOUPDT if the CPU is owned but still not reclaimed 
+.PP
+DLB_ERR_PERM if the CPU cannot be acquired or has been disabled 
+.PP
+DLB_ERR_DISBLD if DLB is disabled 
+.RE
+.PP
+
+.SS "int DLB_Barrier (void)"
+
+.PP
+Perform a DLB Barrier among processes in the node\&. 
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if the process has detached from the default barrier 
+.PP
+DLB_ERR_NOCOMP if DLB Barrier is not enabled (option --barrier)
+.RE
+.PP
+This function performs a shared-memory-based barrier among all DLB processes in the node, unless thay have previously detached\&. The number of participants in the barrier is adaptive, which may produce undesired results if there is no synchronization between the attach/detach process and the barrier itself\&. 
+.SS "int DLB_BarrierAttach (void)"
+
+.PP
+Attach process to the DLB Barrier team\&. 
+.PP
+\fBReturns\fP
+.RS 4
+a positive integer with the updated number of participants 
+.PP
+DLB_ERR_PERM if process was already attached, or if all processes detached 
+.PP
+DLB_ERR_NOMEM if the process cannot attach to more barriers 
+.PP
+DLB_ERR_NOCOMP if DLB Barrier is not enabled (option --barrier) 
+.PP
+DLB_ERR_NOSHMEM if cannot find shared memory
+.RE
+.PP
+If the process had previusly called DLB_BarrierDetach, this function allows a process to become part again of the DLB Barrier team\&. Otherwise, it has no effect\&. 
+.SS "int DLB_BarrierDetach (void)"
+
+.PP
+Detach process from the DLB Barrier team\&. 
+.PP
+\fBReturns\fP
+.RS 4
+a non-negative integer with the updated number of participants 
+.PP
+DLB_ERR_PERM if process was already detached 
+.PP
+DLB_ERR_NOCOMP if DLB Barrier is not enabled (option --barrier) 
+.PP
+DLB_ERR_NOSHMEM if cannot find shared memory
+.RE
+.PP
+Remove process from the DLB Barrier team\&. Subsequent calls to DLB_Barrier from this process will have no effect\&. Other processes in the team will not synchronize with this process on their respective calls to DLB_Barrier\&. 
+.SS "\fBdlb_barrier_t\fP * DLB_BarrierNamedRegister (const char * barrier_name, \fBdlb_barrier_flags_t\fP flags)"
+
+.PP
+Register, or obtain, a named barrier\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbarrier_name\fP the name for the new barrier, or barrier to obtain 
+.br
+\fIflags\fP barrier flags, see below 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+barrier associated to that name, or NULL on error
+.RE
+.PP
+This function registers a new barrier or obtains the pointer to an already created barrier with the same name\&. The returned pointer is an opaque handle to use in other named barrier functions\&. This functions allows the following flags: DLB_BARRIER_LEWI_ON: the barrier may be used to perform LeWI operations DLB_BARRIER_LEWI_OFF: the barrier will not be used to perform LeWI operations DLB_BARRIER_LEWI_RUNTIME: whether this barrier will be used for LewI operations will be decided at run time
+.PP
+Names with commas (,) are supported, but will not work properly when using the --lewi-barrier-select option to select LeWI barriers at run time\&.
+.PP
+Note: DLB_BarrierNamedRegister and DLB_BarrierNamedGet are equivalent\&. 
+.SS "\fBdlb_barrier_t\fP * DLB_BarrierNamedGet (const char * barrier_name, \fBdlb_barrier_flags_t\fP flags)"
+
+.PP
+Register, or obtain, a named barrier\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbarrier_name\fP the name for the new barrier, or barrier to obtain 
+.br
+\fIflags\fP barrier flags, see below 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+barrier associated to that name, or NULL on error
+.RE
+.PP
+This function registers a new barrier or obtains the pointer to an already created barrier with the same name\&. The returned pointer is an opaque handle to use in other named barrier functions\&. This functions allows the following flags: DLB_BARRIER_LEWI_ON: the barrier may be used to perform LeWI operations DLB_BARRIER_LEWI_OFF: the barrier will not be used to perform LeWI operations DLB_BARRIER_LEWI_RUNTIME: whether this barrier will be used for LewI operations will be decided at run time
+.PP
+Names with commas (,) are supported, but will not work properly when using the --lewi-barrier-select option to select LeWI barriers at run time\&.
+.PP
+Note: DLB_BarrierNamedRegister and DLB_BarrierNamedGet are equivalent\&. 
+.SS "int DLB_BarrierNamed (\fBdlb_barrier_t\fP * barrier)"
+
+.PP
+Perform a DLB Barrier using the named barrier among processes in the node\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbarrier\fP named barrier 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_NOUPDT if the process has detached from the barrier 
+.PP
+DLB_ERR_NOCOMP if DLB Barrier is not enabled (option --barrier)
+.RE
+.PP
+This function is equivalent to DLB_Barrier, but providing a named barrier 
+.SS "int DLB_BarrierNamedAttach (\fBdlb_barrier_t\fP * barrier)"
+
+.PP
+Attach process to the named barrier team\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbarrier\fP named barrier to attach to 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+a positive integer with the updated number of participants 
+.PP
+DLB_NOUPDT if process was already attached 
+.PP
+DLB_ERR_NOCOMP if DLB Barrier is not enabled (option --barrier) 
+.PP
+DLB_ERR_NOSHMEM if cannot find shared memory
+.RE
+.PP
+This function is equivalent to DLB_BarrierAttach, but providing a named barrier 
+.SS "int DLB_BarrierNamedDetach (\fBdlb_barrier_t\fP * barrier)"
+
+.PP
+Detach process from the named barrier team\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbarrier\fP named barrier to detach from 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+a non-negative integer with the updated number of participants 
+.PP
+DLB_NOUPDT if process was already detached 
+.PP
+DLB_ERR_NOCOMP if DLB Barrier is not enabled (option --barrier) 
+.PP
+DLB_ERR_NOSHMEM if cannot find shared memory 
+.PP
+DLB_ERR_PERM if all processes have detached from the barrier
+.RE
+.PP
+This function is equivalent to DLB_BarrierDetach, but providing a named barrier 
+.SS "int DLB_SetVariable (const char * variable, const char * value)"
+
+.PP
+Change the value of a DLB internal variable\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvariable\fP Internal variable to set 
+.br
+\fIvalue\fP New value 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_PERM if the variable is readonly 
+.PP
+DLB_ERR_NOENT if the variable does not exist
+.RE
+.PP
+Set a DLB internal variable\&. These variables are the same ones specified in DLB_ARGS, although not all of them can be modified at runtime\&. If the variable is readonly the setter function will return an error\&. 
+.SS "int DLB_GetVariable (const char * variable, char * value)"
+
+.PP
+Query the value of a DLB internal variable\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvariable\fP Internal variable to set 
+.br
+\fIvalue\fP Current DLB variable value 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.PP
+DLB_ERR_NOENT if the variable does not exist
+.RE
+.PP
+Get a DLB internal variable\&. See \fBDLB_SetVariable()\fP\&. 
+.SS "int DLB_PrintVariables (int print_extended)"
+
+.PP
+Print DLB internal variables\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIprint_extended\fP If different to 0, print all options, including experimental, and its description 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.RE
+.PP
+
+.SS "int DLB_PrintShmem (int num_columns, \fBdlb_printshmem_flags_t\fP print_flags)"
+
+.PP
+Print the data stored in the shmem\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fInum_columns\fP Number of columns to use when printing 
+.br
+\fIprint_flags\fP Print options 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success 
+.RE
+.PP
+
+.SS "const char * DLB_Strerror (int errnum)"
+
+.PP
+Obtain a pointer to a string that describes the error code passed by argument\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIerrnum\fP error code to consult 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+pointer to string with the error description 
+.RE
+.PP
+
+.SS "int DLB_SetObserverRole (bool thread_is_observer)"
+
+.PP
+Modify the current thread DLB role to either observer or particpant\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIthread_is_observer\fP true to set current thread to 'observer', false to 'participant' 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+DLB_SUCCESS on success
+.RE
+.PP
+By default, all threads are DLB participants, meaning that they invoke LeWI when needed or measure performance metrics when TALP is enabled\&. A thread that sets its role to 'observer' will still be able to invoke MPI calls or TALP functions, including managing monitoring regions, but it will not trigger LeWI nor any TALP measuring metrics\&. 
+.SS "int DLB_AutoSizerStart (void)"
+
+.SS "int DLB_AutoSizerEnd (void)"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Dynamic Load Balance from the source code\&.

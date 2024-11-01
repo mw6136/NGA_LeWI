@@ -1,0 +1,25 @@
+.TH "dlb_run" 1 "Fri Aug 16 2024" "Version 3.4.1" "Dynamic Load Balance" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+dlb_run \- Execute application with DLB pre-initialized\&. 
+
+.SH "SYNOPSIS"
+.PP
+\fBdlb_run\fP [--verbose] \fB<application>\fP 
+.SH "DESCRIPTION"
+.PP
+Execute \fIapplication\fP in a pre-initialized DLB environment\&.
+.PP
+This is optional on most occasions, since DLB can be initialized at any time during the execution, but it is mandatory if using OMPT support\&. In that case, DLB needs to register the application and obtain the process CPU affinity mask before the OpenMP runtime creates all the threads and changes the CPU affinity mask of each one\&. 
+.SH "OPTIONS"
+.PP
+.IP "\fB--verbose \fP" 1c
+Enable verbose mode\&. Print the command to be executed and its return code upon finalization\&. 
+.PP
+.SH "AUTHOR"
+.PP
+Barcelona Supercomputing Center (dlb@bsc.es) 
+.SH "SEE ALSO"
+.PP
+\fBdlb\fP(1), \fBdlb_shm\fP(1), \fBdlb_taskset\fP(1) 
