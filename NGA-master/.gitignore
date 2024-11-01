@@ -1,0 +1,12 @@
+doc/library_compilation.pdf
+doc/NGA_presentation.ppt
+mod/*
+obj/*
+bin/*
+lib/*
+src/tools/modred-2.0.1/build/
+src/tools/modred-2.0.1/dist/
+src/Makefile.in
+src/*/*~
+src/*/*/*~
+src/combustion/Makefile_*

@@ -1,0 +1,206 @@
+\documentclass[10pt, oneside, onecolumn]{article}
+\usepackage{moreverb}   %for verbatim
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage[bf,hang, small]{caption}
+\usepackage{epsfig}
+\usepackage{psfrag}
+\usepackage{color}
+
+\setlength{\textwidth}{6.25in}
+\setlength{\textheight}{8.5in}
+\setlength{\topskip}{0mm}
+\setlength{\evensidemargin}{0mm}
+\setlength{\oddsidemargin}{0mm}
+\renewcommand{\baselinestretch}{1.0}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\graphicspath{{Figures/}}
+
+\renewcommand{\sectionmark}[1]{\markboth{\sectionname\ \thesection. #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\renewcommand{\thesection}{\arabic{section}}
+
+\begin{document}
+  %\date{October 2005}
+  \title{How-To Guide: \\
+    Compiling the libraries required by NGA}
+  \author{Ed Knudsen} 
+  %\small{\textit{Department of Mechanical Engineering}} \\
+  %\small{\textit{Stanford University}}
+  %}
+  \maketitle
+  %\hrule
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Overview}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  NGA requires 3 sets of external libraries.  These are:
+  \begin{itemize}
+    \item{Lapack \& Blas} 
+    \item{FFTW}
+    \item{Hypre}
+  \end{itemize}
+  Each of these libraries must be locally compiled on a machine before 
+  NGA itself can be compiled.  Each is available for free download from the 
+  web. As of the writing of this document, the versions of the libraries
+  that are being used with NGA are:
+  \begin{itemize}
+    \item{Lapack \& Blas : 3.1.0} 
+    \item{FFTW : 3.1.2}
+    \item{Hypre : 2.0}
+  \end{itemize}
+  Unfortunately, the compilation of several of these libraries is not 
+  intuitive.  This guide is intended to make the installation process
+  go smoothly.   
+  
+  Additionally, to compile NGA a set of MPI libraries 
+  must be available. Several implemetations of those libraries exist:
+  MPICH, MPICH2, OPENMPI, ... This document explains how to compile the
+  MPICH libraries. Currently, MPICH version 1.2.7p1 is being used with
+  the code.
+  
+  While the Lapack, Blas, and FFTW libraries all work in serial, 
+  Hypre is parallel computing software and therefore requires these
+  MPI libraries during installation. The order of compilation is then:
+  \begin{itemize}
+    \item MPICH 
+    \item Lapack \& Blas
+    \item FFTW
+    \item Hypre
+  \end{itemize}
+  
+  % ---------------------------------------------------------------------------
+  \section{MPICH}
+  
+  Download the file {\tt mpich-1.2.7p1.tar.gz} (or some equivalent) and 
+  unpack it.  Installing MPICH involves four steps: 
+  \begin{itemize}
+    \item forcing to use certain compilers:
+      \begin{verbatim}
+	export CC=icc
+	export CXX=icpc
+	export F77=ifort
+	export F90=ifort
+      \end{verbatim}
+    \item testing and configuring the system : {\tt ./configure
+      --prefix=<directory where to install> --with-device=ch\_shmem}
+    \item compiling the libraries: {\tt make}
+    \item installing the libraries: {\tt make install}
+  \end{itemize}
+  We recommand installing the MPICH libraries in {\tt /opt/mpich/}.
+  
+  The catch is that when running the {\tt configure} program, the correct
+  compiler executables such as (for the Intel compilers) {\tt icc} and 
+  {\tt ifort} must be available in the environment so that the machine does 
+  not default and compile with gcc or g77. To make sure that this is 
+  the case, and if it is not already done, add the bin directory of
+  your compiler to the environment path of the shell that you are
+  working in. For example, in the bash 
+  shell,
+  \begin{verbatim}
+    export PATH=$PATH:<path to Intel C/C++ compilers>/bin
+    export PATH=$PATH:<path to Intel Fortran compilers>/bin
+  \end{verbatim}
+  If the path to the Intel compilers was not already included in your
+  {\tt PATH} variable, it is also likely you will have to update
+  another environmental variable:
+  \begin{verbatim}
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<path to Intel C/C++ compilers>/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<path to Intel Fortran compilers>/lib
+  \end{verbatim}
+
+  To make sure that the MPI wrappers were created for all compilers,
+  look in the directory where you installed MPICH. In the {\tt bin}
+  subdirectory, you should find {\tt mpicc}, {\tt mpicxx}, {\tt
+  mpiCC}, {\tt mpif77}, {\tt mpif90}. If they are there then you are
+  all set.  If not, go back to the {\tt configure} step and make sure that
+  it recognizes the latest versions of your compilers.  
+
+  % ---------------------------------------------------------------------------
+  \section{Lapack \& Blas}
+
+  Download and unpack the {\tt lapack-3.1.0.tgz} file (or something similar).
+  In the directory, you should see a {\tt Makefile} and a {\tt
+  make.inc} file, or at least a {\tt make.inc.example} file. If there
+  is no {\tt make.inc} file, copy the {\tt make.inc.example} file to
+  {\tt make.inc}. 
+  
+  Open the {\tt make.inc} file and change the Fortran compiler environment 
+  variables to match the compiler on your local machine.  Lapack and 
+  Blas are compiled using only Fortran, so you will not need to touch 
+  any C/C++ compilers. For the Intel Fortran compiler, we recommand:
+  \begin{verbatim}
+    FORTRAN  = ifort
+    OPTS     = -O3 -xN -ip
+    DRVOPTS  = \$(OPTS)
+    NOOPT    =
+    LOADER   = ifort
+    LOADOPTS = -O3 -xN -ip
+  \end{verbatim}
+  
+  Usually {\tt\bf NGA} wants these libraries in the form {\tt libblas.a}
+  and {\tt liblapack.a}. Change the names of the libraries in {\tt make.inc}:
+  \begin{verbatim}
+    BLASLIB      = ../../libblas.a
+    LAPACKLIB    = liblapack.a
+  \end{verbatim}
+
+  Now you are ready to compile. The compilation is done in two steps:
+  \begin{itemize}
+    \item compiling Blas: {\tt make blaslib}
+    \item compiling Lapack: {\tt make lapacklib}
+  \end{itemize}
+  
+  Create the directory where you want to install the Lapack \& Blas
+  libraries. We recommand installing the libraries in {\tt
+  /opt/lapack}. Copy the two libraries ({\tt libblas.a} and {\tt
+  liblapack.a}) to the install directory.
+
+  \section{FFTW}
+
+  Download {\tt fftw-3.1.2.tar.gz}, or something similar. Unpack it
+  and you should get a series of files that include a {\tt
+  configure} file. Again, you will want to make sure that the latest
+  versions of the compilers you will use for {\tt\bf NGA}, such as
+  {\tt ifort} and {\tt icc}, are available in the path so that FFTW
+  can find them. Installing FFTW involves four steps: 
+  \begin{itemize}
+    \item forcing to use certain compilers:
+      \begin{verbatim}
+	export CC=icc
+	export CXX=icpc
+	export F77=ifort
+      \end{verbatim}
+    \item testing and configuring the system : {\tt ./configure
+      --prefix=<directory where to install>}
+    \item compiling the libraries: {\tt make}
+    \item installing the libraries: {\tt make install}
+  \end{itemize}
+  We recommand installing the FFTW libraries in {\tt /opt/fftw/}. To
+  make sure the FFTW libraries are correctly installed, look for the
+  two files {\tt fftw3.h} and {\tt fftw3.f} in the {\tt include}
+  directory where you installed FFTW.
+  
+  
+  \section{Hypre}
+
+  Download {\tt hypre-2.0.0.tar.gz}, unpack the file and go in the
+  {\tt src} subdirectory. This is the easiest install of them all. The
+  only thing unique about the Hypre installation is that instead of
+  using {\tt ifort} and {\tt icc} to compile, Hypre will use {\tt
+  mpif90} and {\tt mpicc}, so make sure the parallel compilers that
+  you created using mpich are in your local path when you run these
+  commands. Installing Hypre involves three steps:
+  \begin{itemize}
+    \item testing and configuring the system : {\tt ./configure
+      --prefix=<directory where to install>}
+    \item compiling the libraries: {\tt make}
+    \item installing the libraries: {\tt make install}
+  \end{itemize}
+  We recommand installing the Hypre libraries in {\tt /opt/hypre/}. It
+  is very important to download and install the latest version of
+  Hypre, since {\tt\bf NGA} is not compatible with Hypre versions
+  older than $2.0$.
+
+\end{document}
+
+
