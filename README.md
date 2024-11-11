@@ -1,15 +1,12 @@
 # NGA_LeWI
 Course Project for COS597E: Dynamic Load Balancing in a Massively Parallel Reacting Flow Solver
 
-# `NGA`
-Next Generation Advanced Reacting Turbulence Solver, a multi-dimensional, structured flame and turbulence code.
-
-## Installing the code
-[Library installation](library-installation)
+## Installing `NGA`
+[Library Installation](library-installation)
 
 [Code compilation](code-installation)
 
-## Running the code
+## Running `NGA`
 [Generating a data file](generating-a-data-file)
 
 [Code execution](code-execution)
@@ -22,8 +19,21 @@ Next Generation Advanced Reacting Turbulence Solver, a multi-dimensional, struct
 
 [Converting Mechanisms for Finite Chem](finite-chem-mechanism)
 
+## Installing `LeWI`
 
-# Library installation
+[Library Installation](library-installation)
+
+## Basic usage of `LeWI`
+
+[Basic usage](basic-usage)
+
+## [Citations](citations)
+
+----
+# `NGA`
+Next Generation Advanced Reacting Turbulence Solver (ARTS), a multi-dimensional, structured flame and turbulence code.
+
+# Library Installation
 
 [NGA](home) requires five libraries: `LAPACK`, `SUNDIALS`, `FFTW`, `HYPRE`, and some version of `MPI`. These libraries must be installed prior to [compiling NGA](code-installation). The `MPI` library only needs to be installed if it has not been on the machine in use; note that all Princeton and DOE clusters already have an `MPI` library installed.
 
@@ -810,4 +820,108 @@ Note that velocities and pressure come first in a given order, then other scalar
 ```
 data(:,:,:,k) = whatever
 ```
-Where the first three indices represent location in (*x*,*y*,*z*), and the fourth index matches the index from the names selected previously. 
+Where the first three indices represent location in (*x*,*y*,*z*), and the fourth index matches the index from the names selected previously.
+
+
+----
+# `LeWI`
+
+`LeWI` (Lend When Idle) is a dynamic library designed to speed up HPC hybrid applications (i.e., two levels of parallelism) by improving the load balance of the outer level of parallelism (e.g., `MPI`) by dynamically redistributing the computational
+resources at the inner level of parallelism (e.g., `OpenMP`). at run time. This dynamism allows `LeWI` to react to different sources of imbalance: Algorithm, data, hardware architecture and resource availability among others.The algorithm redistributes the computational resources that are not being used from one process to another process inside the same shared memory node in order to speed up its execution.
+
+# Library Installation
+
+1. Build requirements
+* A supported platform running `GNU`/`Linux` (`i386`, `x86-64`, `ARM`, `PowerPC`, or `IA64`)
+* C compiler
+* `Python 2.4` or higher (`Python 3` recommended)
+* `GNU` Autotools, only needed if you want to build from the repository.
+
+2. Download the `LeWI` source code:
+* Either from our website: [DLB Downloads][].
+* Or from a git repository. Clone `LeWI` repository from GitHub:
+      ```bash
+        git clone https://github.com/bsc-pm/dlb.git
+      ```
+* Or download from [GitHub releases][]
+* Bootstrap autotools:
+      ```bash
+      cd dlb
+      ./bootstrap
+      ```
+            
+3. Run `configure`. Optionally, check the configure flags by running `./configure -h` to see detailed information about some features. `MPI` support must be enabled with ``--with-mpi`` and, optionally, an argument telling where `MPI` can be located.
+
+    ```bash
+    ./configure --prefix=<DLB_PREFIX> [<configure-flags>]
+    ```
+    
+4. Build and install
+
+    ```bash
+    make
+    make install
+    ```
+5. Optionally, add the installed bin directory to your `PATH`
+
+    ```bash
+    export PATH=<DLB_PREFIX>/bin:$PATH
+    ```
+
+## Basic usage
+
+Choose between linking or preloading the binary with the `LeWI` shared library `libdlb.so` and configure using the environment variable `DLB_ARGS`.
+
+1. **Example 1:** Share CPUs between `MPI` processes
+
+    ```bash
+    # Link application with DLB
+    mpicc -o myapp myapp.c -L<DLB_PREFIX>/lib -ldlb -Wl,-rpath,<DLB_PREFIX>/lib
+
+    # Launch MPI as usual, each process will dynamically adjust the number of threads
+    export DLB_ARGS="--lewi"
+    mpirun -n <np> ./myapp
+    ```
+
+2. **Example 2:** Share CPUs between `MPI` processes with advanced affinity
+control through `OMPT`.
+
+    ```bash
+    # Link application with an OMPT capable OpenMP runtime
+    OMPI_CC=clang mpicc -o myapp myapp.c -fopenmp
+
+    # Launch application:
+    #   * Set environment variables
+    #   * DLB library is preloaded
+    #   * Run application with binary dlb_run
+    export DLB_ARGS="--lewi --ompt"
+    export OMP_WAIT_POLICY="passive"
+    preload="<DLB_PREFIX>/lib/libdlb.so"
+    mpirun -n <np> <DLB_PREFIX>/bin/dlb_run env LD_PRELOAD="$preload" ./myapp
+    ```
+
+3. **Example 3:** Manually reduce assigned CPUs to an `OpenMP` process.
+
+    ```bash
+    # Launch an application preloading DLB
+    export OMP_NUM_THREADS=4
+    export DLB_ARGS="--drom"
+    export LD_PRELOAD=<DLB_PREFIX>/lib/libdlb.so
+    taskset -c 0-3 ./myapp &
+
+    # Reduce CPU binding to [1,3] and threads to 2
+    myapp_pid=$!
+    dlb_taskset -p $myapp_pid -c 1,3
+
+    ```
+
+4. **Example 4:** Get a `TALP` summary report at the end of an execution
+
+    ```bash
+    export DLB_ARGS="--talp --talp-summary=pop-metrics"
+    PRELOAD=<DLB_PREFIX>/lib/libdlb_mpi.so
+    mpirun <opts> env LD_PRELOAD="$PRELOAD" ./app
+    ```
+
+#### User Guide
+Refer to the [DLB User Guide][] for a more complete documentation. For questions, suggestions and bug reports, the support team can be contacted via e-mail at `dlb@bsc.es`.
