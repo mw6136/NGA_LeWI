@@ -925,3 +925,27 @@ control through `OMPT`.
 
 #### User Guide
 Refer to the [DLB User Guide][] for a more complete documentation. For questions, suggestions and bug reports, the support team can be contacted via e-mail at `dlb@bsc.es`.
+
+# Citations
+
+* O. Desjardins, G. Blanquart, G. Balarac, and H. Pitsch. High order conservative finite difference scheme for variable density low mach number turbulent flows. *Journal of Computational Physics*, 227(15):7125–7159, 2008.
+* J. F. MacArt and M. E. Mueller. Semi-implicit iterative methods for low mach number turbulent reacting flows: Operator splitting versus approximate factorization. *Journal of Computational Physics*, 326:569–595, 2016.
+* A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban, D. E. Shumaker, and C. S. Woodward. SUNDIALS: Suite of nonlinear and differential/algebraic equation solvers. *ACM Trans. Math. Softw.*, 31(3):363–396, 2005.
+* B. Tekgül, P. Peltonen, H. Kahila, O. Kaario, and V. Vuorinen. DLBFoam: An open-source dynamic load balancing model for fast reacting flow simulations in OpenFOAM. *Computer Physics Communications*, 267:108073, 2021.
+* I. Morev, B. Tekgül, M. Gadalla, A. Shahanaghi, J. Kannan, S. Karimkashi, O. Kaario, and V. Vuorinen. Fast reactive flow simulations using analytical Jacobian and dynamic load balancing in OpenFOAM. *Physics of Fluids*, 34(2):021801, Feb 2022.
+* W. Zhang, A. Myers, K. Gott, A. Almgren, and J. Bell. AMReX: Block-structured adaptive mesh refinement for multiphysics applications. *The International Journal of High Performance Computing Applications*, 35(6):508–526, 2021.
+* M. T. Henry de Frahan, J. S. Rood, M. S. Day, S. Hariswaran, S. Yellapantula, B. A. Perry, R. W. Grout, A. Almgren, W. Zhang, J. B. Bell, and J. H. Chen. PeleC: An adaptive mesh refinement solver for compressible reacting flows. *The International Journal of High Performance Computing Applications*, 37(2):115–131, 2023.
+* L. D. Owen, W. Ge, M. Rieth, M. Arienti, L. Esclapez, B. S. Soriano, M. E. Mueller, M. Day, R. Sankaran, and J. H. Chen. PeleMP: The Multiphysics Solver for the Combustion Pele Adaptive Mesh Refinement Code Suite. *Journal of Fluids Engineering*, 146(4):041103, Feb 2024.
+* M. Garcia, J. Corbalan, and J. Labarta. LeWI: A runtime balancing algorithm for nested parallelism. In *International Conference on Parallel Processing, 2009. ICPP ’09.*, pages 526–533, Sep 2009.
+* M. Garcia, J. Labarta, and J. Corbalan. Hints to improve automatic load balancing with lewi for hybrid applications. *Journal of Parallel and Distributed Computing*, 74(9):2781–2794, 2014.
+* M. Garcia, J. Corbalan, R.M. Badia, and J. Labarta. A dynamic load balancing approach with SMPSuperscalar and MPI. In R. Keller, D. Kramer, and J.-P. Weiss, editors, *Facing the Multicore - Challenge II*, volume 7174 of *Lecture Notes in Computer Science*, pages 10–23. Springer Berlin Heidelberg, 2012.
+* R. D. Blumofe and Charles E. Leiserson. Scheduling multithreaded computations by work stealing. *J. ACM*, 46(5):720–748, Sep 1999.
+* M. Raju, M. Wang, M. Dai, W. Piggott, and D. Flowers. Acceleration of detailed chemical kinetics using multi-zone modeling for CFD in internal combustion engine simulations. In *SAE 2012 World Congress & Exhibition*. SAE International, Apr 2012.
+* R. S. Barlow. Sandia H2/He flame data. https://tnfworkshop.org/data-archives/simplejet/, 2003. Release 2.0.
+* R. S. Barlow and C. D. Carter. Raman/Rayleigh/LIF measurements of nitric oxide formation in turbulent hydrogen jet flames. *Combustion and Flame*, 97(3):261–280, 1994.
+* R. S. Barlow and C. D. Carter. Relationships among nitric oxide, temperature, and mixture fraction in hydrogen jet flames. *Combustion and Flame*, 104(3):288–299, 1996.
+* R. S. Barlow and J. H. Frank. Effects of turbulence on species mass fractions in methane/air jet flames. *Symposium (International) on Combustion*, 27(1):1087–1095, 1998. Twenty-Seventh Sysposium (International) on Combustion Volume One.
+* C. E. Lacey, A. G. Novoselov, and M. E. Mueller. In-Situ Adaptive Manifolds: Enabling computationally efficient simulations of complex turbulent reacting flows. *Proceedings of the Combustion Institute*, 38(2):2673–2680, 2021.
+* Z. Chen. *Studies on the Initiation, Propagation, and Extinction of Premixed Flames*. Phd thesis, Princeton University, Princeton, NJ, Jan 2009. Available at http://www2.coe.pku.edu.cn/tpic/2011812212957550.pdf.
+* E. F. Toro. *Riemann Solvers and Numerical Methods for Fluid Dynamics: A Practical Introduction*. Springer Berlin Heidelberg, Berlin, Heidelberg, 2009.
+* P. G. Tucker. *Advanced Computational Fluid and Aerodynamics*. Cambridge Aerospace Series. Cambridge University Press, 2016.
