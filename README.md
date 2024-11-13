@@ -27,6 +27,8 @@ Course Project for COS597E: Dynamic Load Balancing in a Massively Parallel React
 
 [Basic usage](basic-usage)
 
+## [Reference Mapping](reference-mapping)
+
 ## [Citations](citations)
 
 ----
@@ -926,6 +928,38 @@ control through `OMPT`.
 #### User Guide
 Refer to the [DLB User Guide][] for a more complete documentation. For questions, suggestions and bug reports, the support team can be contacted via e-mail at `dlb@bsc.es`.
 
+----
+# Reference Mapping
+
+Once the compilation is successful, any case running with a standard Cartesian grid may further utilize the zonal reference mapping scheme. Set the `refmapping` as `active` in `chemistryProperties` file to use the reference mapping method (it is necessary to add an empty `refmapping{}` `dict` even if it is unused):
+
+```
+refmapping
+{
+    active  true;
+    
+    mixtureFractionProperties
+    {
+        oxidizerMassFractions
+        {
+            N2       0.77;
+            O2       0.23;
+        }
+
+        fuelMassFractions
+        {
+            NC12H26       1.0;
+        }
+
+        #include "$CASE/constant/thermo.f90"
+    }
+    tolerance	1e-4;  // mixture fraction tolerance
+    deltaT	2; // temperature tolerance
+}
+```
+Reference mapping uses mixture fraction ($Z$) and maps a reference solution to reference cells satisfying a condition. The entry above sets the $Z=0$ and $Z=1$ conditions from given mass fractions. For each iteration it finds a reference solution where $Z <$`tolerance` and solves the chemistry. Subsequent cells following the same condition are mapped from this reference solution. When `deltaT` is explicitly set, the scheme also checks the temperature between reference solution and other reference cells and ensures: $|T_\textrm{cell}-T_\textrm{ref}|<$`deltaT`.
+
+----
 # Citations
 
 * O. Desjardins, G. Blanquart, G. Balarac, and H. Pitsch. High order conservative finite difference scheme for variable density low mach number turbulent flows. *Journal of Computational Physics*, 227(15):7125–7159, 2008. DOI: https://doi.org/10.1016/j.jcp.2008.03.027.
