@@ -933,6 +933,7 @@ Refer to the [DLB User Guide][] for a more complete documentation. For questions
 * A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban, D. E. Shumaker, and C. S. Woodward. SUNDIALS: Suite of nonlinear and differential/algebraic equation solvers. *ACM Trans. Math. Softw.*, 31(3):363–396, 2005. DOI: https://doi.org/10.1145/1089014.1089020.
 * B. Tekgül, P. Peltonen, H. Kahila, O. Kaario, and V. Vuorinen. DLBFoam: An open-source dynamic load balancing model for fast reacting flow simulations in OpenFOAM. *Computer Physics Communications*, 267:108073, 2021. DOI: https://doi.org/10.1016/j.cpc.2021.108073.
 * I. Morev, B. Tekgül, M. Gadalla, A. Shahanaghi, J. Kannan, S. Karimkashi, O. Kaario, and V. Vuorinen. Fast reactive flow simulations using analytical Jacobian and dynamic load balancing in OpenFOAM. *Physics of Fluids*, 34(2):021801, Feb 2022. DOI: https://doi.org/10.1063/5.0077437.
+   D. Rettenmaier, D. Deising, Y. Ouedraogo, E. Gjonaj, H. De Gersem, D. Bothe, C. Tropea, and H. Marschall. Load balanced 2D and 3D adaptive mesh refinement in OpenFOAM. *SoftwareX*, 10:100317, 2019. DOI: https://doi.org/10.1016/j.softx.2019.100317.
 * W. Zhang, A. Myers, K. Gott, A. Almgren, and J. Bell. AMReX: Block-structured adaptive mesh refinement for multiphysics applications. *The International Journal of High Performance Computing Applications*, 35(6):508–526, 2021. DOI: https://doi.org/10.1177/10943420211022811.
 * M. T. Henry de Frahan, J. S. Rood, M. S. Day, S. Hariswaran, S. Yellapantula, B. A. Perry, R. W. Grout, A. Almgren, W. Zhang, J. B. Bell, and J. H. Chen. PeleC: An adaptive mesh refinement solver for compressible reacting flows. *The International Journal of High Performance Computing Applications*, 37(2):115–131, 2023. DOI: https://doi.org/10.1177/10943420221121151.
 * L. D. Owen, W. Ge, M. Rieth, M. Arienti, L. Esclapez, B. S. Soriano, M. E. Mueller, M. Day, R. Sankaran, and J. H. Chen. PeleMP: The Multiphysics Solver for the Combustion Pele Adaptive Mesh Refinement Code Suite. *Journal of Fluids Engineering*, 146(4):041103, Feb 2024. DOI: https://doi.org/10.1115/1.4064494.
@@ -947,7 +948,7 @@ Refer to the [DLB User Guide][] for a more complete documentation. For questions
 * R. S. Barlow and J. H. Frank. Effects of turbulence on species mass fractions in methane/air jet flames. *Symposium (International) on Combustion*, 27(1):1087–1095, 1998. Twenty-Seventh Sysposium (International) on Combustion Volume One. DOI: https://doi.org/10.1016/S0082-0784(98)80510-9.
 * C. E. Lacey, A. G. Novoselov, and M. E. Mueller. In-Situ Adaptive Manifolds: Enabling computationally efficient simulations of complex turbulent reacting flows. *Proceedings of the Combustion Institute*, 38(2):2673–2680, 2021. DOI: https://doi.org/10.1016/j.proci.2020.06.207.
 * Z. Chen. *Studies on the Initiation, Propagation, and Extinction of Premixed Flames*. Phd thesis, Princeton University, Princeton, NJ, Jan 2009. Available at http://www2.coe.pku.edu.cn/tpic/2011812212957550.pdf.
-* E. F. Toro. *Riemann Solvers and Numerical Methods for Fluid Dynamics: A Practical Introduction*. Springer Berlin Heidelberg, Berlin, Heidelberg, 2009.
+* E. F. Toro. *Riemann Solvers and Numerical Methods for Fluid Dynamics: A Practical Introduction*. Springer Berlin Heidelberg, Berlin, Heidelberg, 2009. DOI: https://doi.org/10.1007/b79761_1.
 * P. G. Tucker. *Advanced Computational Fluid and Aerodynamics*. Cambridge Aerospace Series. Cambridge University Press, 2016.
 
 <!---
@@ -1203,5 +1204,26 @@ Refer to the [DLB User Guide][] for a more complete documentation. For questions
     doi     = {10.1016/j.jcp.2016.09.016},
     url     = {https://www.sciencedirect.com/science/article/pii/S0021999116304284},
     author  = {MacArt, J. F. and Mueller, M. E.}
+}
+
+@book{Tucker2016,
+    place       =   {Cambridge},
+    series      =   {Cambridge Aerospace Series},
+    title       =   {Advanced Computational Fluid and Aerodynamics},
+    doi         =   {10.1017/CBO9781139872010},
+    publisher   =   {Cambridge University Press},
+    author      =   {Tucker, P. G.},
+    year        =   {2016},
+    collection  =   {Cambridge Aerospace Series}
+}
+
+@book{Toro2009,
+    author      =   {Toro, E. F.},
+    title       =   {Riemann Solvers and Numerical Methods for Fluid Dynamics: A Practical Introduction},
+    year        =   {2009},
+    publisher   =   {Springer Berlin Heidelberg},
+    address     =   {Berlin, Heidelberg},
+    doi         =   {10.1007/b79761_1},
+    url         =   {https://doi.org/10.1007/b79761_1}
 }
 -->
