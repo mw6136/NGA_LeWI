@@ -42,10 +42,10 @@ Next Generation Advanced Reacting Turbulence Solver (ARTS), a multi-dimensional,
 *It is very important that the same compiler version (and `MPI` version) are used when installing these libraries and `NGA`.* There are many versions installed on the clusters, which can be viewed using the `module avail` command and loaded using the `module load` command. The recommended versions are as follows:
 
 On `tigercpu` (Old Tiger) : Intel 19.1 (default)
-
-      module load intel
-      module load intel-mpi
-
+```
+module load intel
+module load intel-mpi
+```
 On `tiger3` (New Tiger) : Intel 2024.2
 ```
 module load intel/2024.2
@@ -61,24 +61,24 @@ The libraries can either be installed through a single automated process, as des
 
 For convenience, the Bash script `NGA-Library-Installer.sh` has been provided at the bottom of this section. It will automatically install the required libraries for `NGA` (including the serial and parallel versions of `HYPRE`, excluding `MPI`).  Copy the script to the home directory, and then enable executing the installation script with: 
 ```
-    chmod 755 NGA-Library-Installer.sh
+chmod 755 NGA-Library-Installer.sh
 ```
 Then execute the installation:
 ```
-    ./NGA-Library-Installer.sh tiger3
+./NGA-Library-Installer.sh tiger3
 ```
 where `tiger3` (New Tiger) can be replaced by `tigercpu` (Old Tiger) or `<workstation>`, depending on where the libraries are installed. The script uses Intel version 2024.2 on `tiger3` and Intel version 19.1 on `tigercpu`. Note that if installing on a workstation, one may need to manually install a version of `MPI` (see below) prior to running the automated installation script for the other libraries.
 
 This script updates the `.bashrc` file, so run the command
 ```
-     source ~/.bashrc 
+source ~/.bashrc 
 ```
 to make sure these changes are reflected in the working terminal. If the install script completed with no errors, the libraries are now installed, and move on to [installing NGA](#downloading-nga). Verify installation by checking in `/home/$USER/opt/` directory, which should have subdirectories where `lapack`, `hypre`, `hypre` (with `openmp`), `fftw`, and `sundials` were installed. The specific files that should be within these directories are listed at the end of each section of the manual installation instructions.
 
 ----
 The script can also be used to uninstall the libraries. To do this, add `uninstall` to the end of the command above. For example,
 ```
-    ./NGA-Library-Installer.sh tigercpu uninstall
+./NGA-Library-Installer.sh tigercpu uninstall
 ```
 An old version of the installation bash script `NGA-Library-Installer-13.sh` has also been provided, but its use is deprecated.  It works with old versions of the compilers and libraries that may no longer be available. (`intel-13.0`, `lapack-3.5.0`, `fftw-3.3.4`, `sundials-2.6.1`, `hypre-2.10.0b`).
 
@@ -105,88 +105,88 @@ Also, installation of `g++` through `yum install gcc-c++`  may be needed if the 
 `LAPACK` (Linear Algebra PACKage) is a library of various numerical linear algebra routines.  The latest version of `LAPACK` (3.7.1 as of 08/17) can be downloaded from http://www.netlib.org/lapack.
 
 Download and unpack the archive by executing the following:
-
-    cd /home/$USER/Downloads
-    wget https://github.com/Reference-LAPACK/lapack/archive/refs/tags/v3.11.tar.gz
-    tar -zxf v3.11.tar.gz
-    cd lapack-3.11
-
+```
+cd /home/$USER/Downloads
+wget https://github.com/Reference-LAPACK/lapack/archive/refs/tags/v3.11.tar.gz
+tar -zxf v3.11.tar.gz
+cd lapack-3.11
+```
 In the new directory, copy the file `make.inc.example` to `make.inc`.  Open this file and change the Fortran compiler options to the following:
-
-    FORTRAN  = ifort
-    OPTS     = -O3 -xhost -ip
-    NOOPT    = 
-    LOADER   = ifort
-    LOADOPTS = -O3 -xhost -ip
-    ARCH      = xiar
-
+```
+FORTRAN  = ifort
+OPTS     = -O3 -xhost -ip
+NOOPT    = 
+LOADER   = ifort
+LOADOPTS = -O3 -xhost -ip
+ARCH      = xiar
+```
 In addition, the `TIMER` option will need to be changed.  Comment out the current setting, `TIMER = INT_ETIME`, and re-enable `TIMER = EXT_ETIME`, which is compatible with the `ifort` compiler.  There are additional options for a C compiler, but these do not need to be changed since `NGA` does not use the C interfaces to `LAPACK`.
 
 `NGA` will need the BLAS (Basic Linear Algebra Subprograms) library for simple matrix/vector math such as multiplication, etc., and the `LAPACK` library.  These libraries must be named, `libblas.a` and `liblapack.a`, respectively.  Therefore, edit the following options in `make.inc`:
-
-    BLASLIB      = ../../libblas.a
-    LAPACKLIB    = liblapack.a
-
+```
+BLASLIB      = ../../libblas.a
+LAPACKLIB    = liblapack.a
+```
 To speed up compiling, compile in parallel.  Open `Makefile` and edit the instructions under the target `blaslib` to be `$(MAKE) -C BLAS -j 4` to compile with 4 cores.  Similarly, edit the instructions under the target `lapacklib` to be `$(MAKE) -C SRC -j 4`.
 
 The compilation of the two libraries is done in two steps in the following order:
 
 1. To compile BLAS, execute
-  
-        make blaslib
-  
+```
+make blaslib
+```  
 2. To compile `LAPACK`, execute
-  
-        make lapacklib
-  
+```
+make lapacklib
+```
 To complete the installation of these libraries, copy `libblas.a` and `liblapack.a` to a convenient location through
-
-    sudo cp libblas.a liblapack.a /opt/lapack/lib
-
+```
+sudo cp libblas.a liblapack.a /opt/lapack/lib
+```
 or
-
-    cp libblas.a liblapack.a /home/$USER/opt/lapack/lib
-
+```
+cp libblas.a liblapack.a /home/$USER/opt/lapack/lib
+```
 for installation on a local workstation/laptop (superuser access available) or on the `TIGER` cluster (no superuser access available), respectively.
 
 ----
 ### `FFTW`
 
 `FFTW` (Fastest Fourier Transform in the West) is a library for computing discrete Fourier transforms.  The latest version of `FFTW` (3.3.10 as of 04/23) can be downloaded from http://www.fftw.org or via
-
-    wget http://www.fftw.org/fftw-3.3.10.tar.gz
-
+```
+wget http://www.fftw.org/fftw-3.3.10.tar.gz
+```
 Download and unpack the archive.  The compilers and compiler flags are set with environment variables.  From the command line, execute the following commands:
-
-    export CC=icc
-    export CXX=icpc
-    export F77=ifort
-    export AR=xiar
-    export LD=xild
-    export CFLAGS="-O3 -xhost -ip"
-    export CXXFLAGS="-O3 -xhost -ip"
-    export FFLAGS="-O3 -xhost -ip"
-
+```
+export CC=icc
+export CXX=icpc
+export F77=ifort
+export AR=xiar
+export LD=xild
+export CFLAGS="-O3 -xhost -ip"
+export CXXFLAGS="-O3 -xhost -ip"
+export FFLAGS="-O3 -xhost -ip"
+```
 To automatically generate a `Makefile` for `FFTW`, run the `configure` script.  The option `prefix` will dictate where the code is installed.  For example, depending on superuser access, execute either
-
-    ./configure --prefix=/opt/fftw --enable-openmp
-
+```
+./configure --prefix=/opt/fftw --enable-openmp
+```
 or
-
-    ./configure --prefix=/home/$USER/opt/fftw --enable-openmp
-
+```
+./configure --prefix=/home/$USER/opt/fftw --enable-openmp
+```
 To compile the `FFTW` library in parallel (on `TIGER` use `-j 8`), execute
-
-    make -j 4
-
+```
+make -j 4
+```
 and, to install the `FFTW` library, execute
-
-    sudo make install
-
+```
+sudo make install
+```
 or
-
-    make install
-
+```
+make install
+```
 depending on the availability of superuser access.
 
 Upon successful installation, the files `fftw3.h` and `fftw3.f`  should appear in the directory `/home/$USER/opt/fftw/include`, and the files `libfftw3.a` and `libfftw3_omp.a` should appear in the directory `/home/$USER/opt/fftw/lib`.
@@ -195,41 +195,41 @@ Upon successful installation, the files `fftw3.h` and `fftw3.f`  should appear i
 ### `SUNDIALS` 4.0.0
 
 First, as usual, download and unpack the tarball from LLNL's Github via the following commands:
-
-    cd /home/$USER/Downloads
-    wget https://github.com/LLNL/sundials/releases/download/v4.0.0/sundials-4.0.0.tar.gz
-    tar -zxf sundials-4.0.0.tar.gz
-
+```
+cd /home/$USER/Downloads
+wget https://github.com/LLNL/sundials/releases/download/v4.0.0/sundials-4.0.0.tar.gz
+tar -zxf sundials-4.0.0.tar.gz
+```
 Create a `sundials` directory along with a `builddir` subdirectory:
-
-    mkdir -p /home/$USER/opt/sundials-4/builddir
-    cd /home/$USER/opt/sundials-4/builddir
-
+```
+mkdir -p /home/$USER/opt/sundials-4/builddir
+cd /home/$USER/opt/sundials-4/builddir
+```
 Then create bash variables to store the paths to the C and Fortran compilers. In the command-line, type
-
-    ccpath="$(which icc)"
-    fcpath="$(which ifort)"
-
+```
+ccpath="$(which icc)"
+fcpath="$(which ifort)"
+```
 Now use the CMake to generate the `Makefile`.  Execute the following:
-
-    cmake -DCMAKE_INSTALL_PREFIX=/home/$USER/opt/sundials \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_C_COMPILER=$ccpath \
-    -DCMAKE_C_FLAGS_RELEASE="-O3 -xhost -ip" \
-    -DCMAKE_Fortran_COMPILER=$fcpath \
-    -DCMAKE_Fortran_FLAGS_RELEASE="-O3 -xhost -ip" \
-    -DEXAMPLES_ENABLE=OFF \
-    -DFCMIX_ENABLE=ON \
-    /home/$USER/Downloads/sundials-4.0.0
-
+```
+cmake -DCMAKE_INSTALL_PREFIX=/home/$USER/opt/sundials \
+-DCMAKE_BUILD_TYPE=Release \
+-DCMAKE_C_COMPILER=$ccpath \
+-DCMAKE_C_FLAGS_RELEASE="-O3 -xhost -ip" \
+-DCMAKE_Fortran_COMPILER=$fcpath \
+-DCMAKE_Fortran_FLAGS_RELEASE="-O3 -xhost -ip" \
+-DEXAMPLES_ENABLE=OFF \
+-DFCMIX_ENABLE=ON \
+/home/$USER/Downloads/sundials-4.0.0
+```
 Execute `make install -j` to compile in parallel and install the library.  If the installation directory requires superuser permissions for writing, the latter command must be executed as superuser.
 
 Upon successful installation, the libraries `libsundials_cvode.a`, `libsundials_fcvode.a`, `libsundials_fnvecserial.a`, and `libsundials_nvecserial.a` should be in the `lib` sub-directory of the directory in which `SUNDIALS` was installed.
 
 Lastly, add
-
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/opt/sundials/lib64
-
+```
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/opt/sundials/lib64
+```
 to `~/.bashrc`.  Don't forget to call `source ~/.bashrc` in the working terminal.
 
 **Warning: `SUNDIALS` 4.0.0 drops the FCVDENSE interface, making master branch `NGA` installations not work. For now, the workaround is to comment out line 1135 in `src/combustion/finitechem.f90` (master branch) since it is no longer necessary.**
@@ -237,122 +237,120 @@ to `~/.bashrc`.  Don't forget to call `source ~/.bashrc` in the working terminal
 ----
 ### `MPI` (not needed if running on a cluster)
 
-Message Passing Interface (`MPI`) is a standard for libraries that allow code parallelization on distributed memory systems.  **Only install an `MPI` implementation if one is not already installed on the machine in use.  All clusters, including `TIGER`, already have an `MPI` implementation installed.**  The `MPI` compilers are required to compile `NGA` (and the `HYPRE` library in the next step), so include the line `module load openmpi/intel-16.0` in the `~/.bashrc` file.
+Message Passing Interface (`MPI`) is a standard for libraries that allow code parallelization on distributed memory systems.  **Only install an `MPI` implementation if one is not already installed on the machine in use. All clusters, including `TIGER`, already have an `MPI` implementation installed.**  The `MPI` compilers are required to compile `NGA` (and the `HYPRE` library in the next step), so include the line `module load openmpi/intel-16.0` in the `~/.bashrc` file.
 
 Install an `MPI` library on [CTRFL](https://ctrfl.princeton.edu/) workstations if it is not already installed.  `MPI` is the recommended distribution, and the latest version (2.1.1 as of 08/17) can be downloaded from http://open-mpi.org.
 
 Download and unpack the archive.  To automatically generate a `Makefile` for `MPI`, run the `configure` script.  The option `prefix` will dictate where the code is installed.  For example, depending on superuser access, execute either
-
-    ./configure CC=icc CXX=icpc F77=ifort FC=ifort \
-    CFLAGS="-O3 -xhost -ip" CXXFLAGS="-O3 -xhost -ip" \
-    FFLAGS="-O3 -xhost -ip" FCFLAGS="-O3 -xhost -ip" \
-    --prefix=/opt/openmpi
-
+```
+./configure CC=icc CXX=icpc F77=ifort FC=ifort \
+CFLAGS="-O3 -xhost -ip" CXXFLAGS="-O3 -xhost -ip" \
+FFLAGS="-O3 -xhost -ip" FCFLAGS="-O3 -xhost -ip" \
+--prefix=/opt/openmpi
+```
 or
-
-    ./configure CC=icc CXX=icpc F77=ifort FC=ifort \
-    CFLAGS="-O3 -xhost -ip" CXXFLAGS="-O3 -xhost -ip" \
-    FFLAGS="-O3 -xhost -ip" FCFLAGS="-O3 -xhost -ip" \
-    --prefix=/home/$USER/opt/openmpi
-
+```
+./configure CC=icc CXX=icpc F77=ifort FC=ifort \
+CFLAGS="-O3 -xhost -ip" CXXFLAGS="-O3 -xhost -ip" \
+FFLAGS="-O3 -xhost -ip" FCFLAGS="-O3 -xhost -ip" \
+--prefix=/home/$USER/opt/openmpi
+```
 To compile the `MPI` library, execute (on `TIGER` use `-j 8`):
-
-    make -j 4 all
-
+```
+make -j 4 all
+```
 and, to install the `MPI` library, execute
-
-    make install
-
+```
+make install
+```
 If the installation directory requires superuser permissions for writing, the latter command must be executed as superuser.
 
 Upon successful installation, the binaries `mpicc`, `mpicxx`, `mpif77`, `mpif90`, and `mpifort` should be in the `bin` sub-directory of the directory in which `MPI` was installed.
 
 If installing `NGA` on a workstation machine or if a copy of `MPI` is already installed, add `MPI` to the user bash profile.  Open the hidden `~/.bashrc` file and add the following:
-
-    export PATH=$PATH:/home/$USER/opt/openmpi/bin
-
+```
+export PATH=$PATH:/home/$USER/opt/openmpi/bin
+```
 The directory for the `bin` path may not appear exactly as above; it depends on where `MPI` was installed.
 
 Additionally, add the libraries in a similar fashion as above, using:
-
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/opt/openmpi/lib
-
+```
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/opt/openmpi/lib
+```
 ----
 ### `HYPRE`
 
 `HYPRE` (Scalable Linear Solvers and Multigrid Methods) is a library for solving linear systems in parallel with various iterative methods (Krylov and multigrid). `HYPRE` can be acquired from the Github page via `wget`:
-
-    wget https://github.com/hypre-space/hypre/archive/refs/heads/master.zip
-
+```
+wget https://github.com/hypre-space/hypre/archive/refs/heads/master.zip
+```
 Download and unpack the archive.  Note that an `MPI` library must be installed prior to the installation of `HYPRE`.  Once the `MPI` library is installed, execute 
-
-    source ~/.bashrc
- 
+```
+source ~/.bashrc
+```
 from the home directory.  The compilers and compiler flags are set with environment variables.  From the command line, execute the following commands:
-
-    unset AR
-    unset LD
-    export CC=mpicc
-    export CXX=mpicc
-    export FC=mpif90
-    export CFLAGS="-O3 -xhost -ip"
-    export CXXFLAGS="-O3 -xhost -ip"
-    export FCFLAGS="-O3 -xhost -ip"
-
+```
+unset AR
+unset LD
+export CC=mpicc
+export CXX=mpicc
+export FC=mpif90
+export CFLAGS="-O3 -xhost -ip"
+export CXXFLAGS="-O3 -xhost -ip"
+export FCFLAGS="-O3 -xhost -ip"
+```
 Note that the first two lines ensure that AR is not set to `xiar` and LD is not set to `xild`, otherwise an error `ar: illegal option -- H` will prevent compilation.  To automatically generate a *Makefile* for `HYPRE`, run the `configure` script while in the `src` directory.  The option `prefix` will dictate where the code is installed.  For example, depending on superuser access, execute either
-
-    cd /home/$USER/Downloads/hypre-2.11.2/src
-    ./configure --prefix=/opt/hypre
-
+```
+cd /home/$USER/Downloads/hypre-2.11.2/src
+./configure --prefix=/opt/hypre
+```
 or
-
-    cd /home/$USER/Downloads/hypre-2.11.2/src
-    ./configure --prefix=/home/$USER/opt/hypre
-
+```
+cd /home/$USER/Downloads/hypre-2.11.2/src
+./configure --prefix=/home/$USER/opt/hypre
+```
 To compile and install the `HYPRE` library, execute (on `TIGER` use `-j 8`):
-
-    make install -j 4
-
+```
+make install -j 4
+```
 If the installation directory is something that requires superuser permissions for writing, the latter command must be executed as superuser.
 
 Upon successful installation, the file `libHYPRE.a` should be in the `lib` sub-directory of the directory in which `HYPRE` was installed.
 
 For some problems on certain systems, when `NGA` is run in a hybrid parallel mode (`MPI` + `OpenMP`), higher performance can *'sometimes*' be achieved when `HYPRE` is allowed to use the `OpenMP` threads.  To allow the latter, the same instructions as above should be followed.  However, the compiler flags should be changed to
-
-    export CFLAGS="-O3 -qopenmp -xhost -ip"
-    export CXXFLAGS="-O3 -qopenmp -xhost -ip"
-    export FCFLAGS="-O3 -qopenmp -xhost -ip"
-
+```
+export CFLAGS="-O3 -qopenmp -xhost -ip"
+export CXXFLAGS="-O3 -qopenmp -xhost -ip"
+export FCFLAGS="-O3 -qopenmp -xhost -ip"
+```
 and an additional option is required for the `configure` script:
-
-    ./configure --with-openmp --prefix=/opt/hypre-openmp
-
+```
+./configure --with-openmp --prefix=/opt/hypre-openmp
+```
 or
-
-    ./configure --with-openmp --prefix=/home/$USER/opt/hypre-openmp
-
-As a practical note, it is good practice to keep two working installations of `HYPRE`, one without `OpenMP` and one with `OpenMP`.  This allows the fastest installation to be used for various problems without having to constantly recompile/reinstall `HYPRE`. `HYPRE` with `OpenMP` should also work for runs without `OpenMP` without errors/failure. Keeping both is just for 5-10% performance improvement, which may not be the case any more for new version of `HYPRE`. When installing the second `HYPRE`, remember to make clean first.
-
-
+```
+./configure --with-openmp --prefix=/home/$USER/opt/hypre-openmp
+```
+As a practical note, it is good practice to keep two working installations of `HYPRE`, one without `OpenMP` and one with `OpenMP`.  This allows the fastest installation to be used for various problems without having to constantly recompile/reinstall `HYPRE`. `HYPRE` with `OpenMP` should also work for runs without `OpenMP` without errors/failure. Keeping both is just for 5-10% performance improvement, which may not be the case any more for new version of `HYPRE`. When installing the second `HYPRE`, remember to `make clean` first.
 
 # Downloading `NGA`
 
 To download a clear version of `NGA` from the server, execute the command
-
-    git clone git@ctrfl-internal.Princeton.EDU:ctrfl_codes/NGA.git
-
+```
+git clone git@ctrfl-internal.Princeton.EDU:ctrfl_codes/NGA.git
+```
 To download a clear version of `NGA` from the server into a directory other than "NGA", execute the command
-
-    git clone git@ctrfl-internal.Princeton.EDU:ctrfl_codes/NGA.git my_NGA
-
+```
+git clone git@ctrfl-internal.Princeton.EDU:ctrfl_codes/NGA.git my_NGA
+```
 If `NGA` is already installed and a simple version update with the most recent changes from the server is needed, execute the command
-
-    git pull
-
+```
+git pull
+```
 From `STAMPEDE` and `PERLMUTTER` (or other DOE clusters) the clone command needs to include the username:
-
-    git clone http://<username>@ctrfl-internal.Princeton.EDU/ctrfl_codes/NGA.git
-
+```
+git clone http://<username>@ctrfl-internal.Princeton.EDU/ctrfl_codes/NGA.git
+```
 ----
 # Compiling `NGA`
 
@@ -369,8 +367,8 @@ Remark: Using `mpif90` or `mpifort` depends on which one is available, but they 
 
 The Skylake processors on the new `TIGER` support 512-bit vector extensions, which could make `NGA` run faster. To compile using these extensions, set the following two lines in `Makefile.in` as:
 ```
-    LDFLAGS  = -qopenmp -xCORE-AVX512
-    OPTFLAGS = -qopenmp -O3 -xCORE-AVX512
+LDFLAGS  = -qopenmp -xCORE-AVX512
+OPTFLAGS = -qopenmp -O3 -xCORE-AVX512
 ```
 
 Remarks:
@@ -381,8 +379,8 @@ Remarks:
 
 Also make change these fields:
 ```    
-    AR  = xiar rcv
-    DBGFLAGS= -qopenmp -O0 -g -CA -CB -CS -traceback -debug all -ftrapuv -check noarg_temp_created -WB -warn none
+AR  = xiar rcv
+DBGFLAGS= -qopenmp -O0 -g -CA -CB -CS -traceback -debug all -ftrapuv -check noarg_temp_created -WB -warn none
 ```
 
 Remark:
@@ -391,42 +389,38 @@ Remark:
 
 (2) `-ftrapuv` stops the code if see division by zero, which is very useful. However, for DNS Box case, `-ftrapuv` indicates such a bug when calling `HYPRE_StructGMRESSetup` and stops the code. Since this is an internal subroutine of the `hypre` library, since only the input can be seen, there is no easy way to debug here and figure out why. This bug is still there waiting for future solution.
 
-One mustalso comment out `use mpi` in `library/parallel.f90` and uncomment `include 'mpif.h'`.
+One must also comment out `use mpi` in `library/parallel.f90` and uncomment `include 'mpif.h'`.
 
 ### Old `TIGER` (tiger) 
 
 AS OF 08/2016: If the above libraries were installed using the latest Intel compilers (`intel/16.0/64/16.0.2.181` on `TIGER` as of 08/16), modify the following fields in `Makefile.in`:
 ```
-    F90 = mpifort
-    LD  = mpifort
-    AR  = xiar rcv
-    LDFLAGS  = -qopenmp
-    DBGFLAGS = -qopenmp -O0 -g -CA -CB -CS -CV -traceback -debug all -ftrapuv -check noarg_temp_created -WB -warn none
-    OPTFLAGS = -qopenmp -O3 -xhost -ipo -qoverride-limits -nowarn
+F90 = mpifort
+LD  = mpifort
+AR  = xiar rcv
+LDFLAGS  = -qopenmp
+DBGFLAGS = -qopenmp -O0 -g -CA -CB -CS -CV -traceback -debug all -ftrapuv -check noarg_temp_created -WB -warn none
+OPTFLAGS = -qopenmp -O3 -xhost -ipo -qoverride-limits -nowarn
 ```
 If using the `openmpi/intel-16.0` module on `TIGER`, comment out `use mpi` in `library/parallel.f90` and uncomment `include 'mpif.h'`. Otherwise an error message like the following will be received:
 ```
 parallel.f90(116): error #6285: There is no matching specific subroutine for this generic subroutine call.   [MPI_ALLREDUCE]
 ```
 
-Also add the lines `module load intel/16.0` and `module load openmpi/intel-16.0` to the `SLURM` script.
-
-
-
-<!-- Additionally, to speed up compilation of `NGA`, open `Makefile` and edit the instructions under the target `opt` to be `@make -j 4 "FLAGS = $(OPTFLAGS)"`. Similarly, edit the instructions under the target `debug` to be `@make -j 4 "FLAGS = $(OPTFLAGS)"`. Note that on `TIGER`, specify 8 cores instead of 4 cores for faster compilation. -->
+Also add the lines `module load intel/16.0` and `module load openmpi/intel-16.0` to the `SLURM` script. To speed up compilation of `NGA`, open `Makefile` and edit the instructions under the target `opt` to be `@make -j 4 "FLAGS = $(OPTFLAGS)"`. Similarly, edit the instructions under the target `debug` to be `@make -j 4 "FLAGS = $(OPTFLAGS)"`. Note that on `TIGER`, specify 8 cores instead of 4 cores for faster compilation.
 
 ## Compiling
 
 If on a cluster, use the `module list` command to show what modules are currently loaded. If these are different than the modules loaded when installing the libraries for `NGA`, use the `module purge` command and then `module load` the correct modules, as described in the section on [libraries](#nga-library-installation).
 
 Compilation of `NGA` then occurs in one single step.  To compile the code for production runs (faster code, longer compilation), execute the command
-
-    make opt
-
+```
+make opt
+```
 Alternatively, to compile the code for debugging (slower code, shorter compilation), for which additional diagnostics will be printed to the screen for debugging purposes, execute the command
-
-    make debug
-
+```
+make debug
+```
 Unless there is a specific need, the code should always be compile in `opt` mode.
 
 If compilation of the code was successful, the `NGA` `bin` directory should contain several executables, notably, `ARTS` and `init_flow`.
@@ -439,33 +433,33 @@ When designing a grid for simulations in [NGA](#nga), specify the grid geometry 
 For the purpose of this tutorial, the file is named `example_simulation.f90` and placed in `~/NGA/src/tools/init_flow`.
 
 In order for [NGA](#nga) to incorporate grid specifications into `init_flow`, append `example_simulation.f90` to the end of the `F90FILES` field in the `Makefile` of `~/NGA/src/tools/init_flow`. The `Makefile` should look like:
+```
+include ../../Makefile.in
 
-    include ../../Makefile.in
-
-    F90FILES = param.f90 taylor.f90 ...
-               ...
-               jetcart2.f90 simplejet.f90 \
-               example_simulation.f90
-
+F90FILES = param.f90 taylor.f90 ...
+         ...
+         jetcart2.f90 simplejet.f90 \
+         example_simulation.f90
+```
 
 Additionally, add the case corresponding to `example_simulation.f90` before `case default` in `init_flow.f90`. The format should be similar to
-
-    case ('desired_case_name')
-       call subroutine1_grid
-       call subroutine2_data
-       call subroutine3_optdata
-
+```
+case ('desired_case_name')
+ call subroutine1_grid
+ call subroutine2_data
+ call subroutine3_optdata
+```
 
 Lastly, generate the `init_flow` executable by calling `make opt` in `~/NGA/src`. Create the `config`, `data.0`, and `optdata.0` files by calling
-
-    ~/NGA/bin/init_flow input
-
+```
+~/NGA/bin/init_flow input
+```
 in the same directory where the `input` file is located. The `config`, `data.0`, and `optdata.0` files can be moved onto the `TIGER` cluster using `scp`. To interpolate data from one grid to another, first make sure that the new resolution grids for the specific problem/case are already specified in the `/tools/init_flow/`
 
 Second, generate the new `config` using the new input file with the new grid, then call
-
-    ~/NGA/bin/interpolatedata
-
+```
+~/NGA/bin/interpolatedata
+```
 Enter the source `config`, the target `config`, the source `data.*`, and the target `data.*`. After execution, the target `data.*` will be generated for use. 
 
 The `data.*` could also be `optdata.*`. `inflow` normally can be interpolated automatically, so no need to do above.
@@ -477,22 +471,22 @@ This section covers the basics of running `NGA` that are uniform across all mach
 [Running on `TIGER`](#running-on-tiger), and [Examples](#examples). [NGA](#nga) is run in two distinct steps.
 
 1. `init_flow` is executed to create a `config` file and an initial `data` (and possibly `optdata`) file.  The config file contains all of the information about the flow geometry; the data file contains the velocities and scalars.  `init_flow` is run in serial and takes a single command line argument: the name of the input file.  For example, `init_flow` can be run by executing the following command
-
-        /home/<username>/NGA/bin/init_flow <input file>
-
+```
+  /home/<username>/NGA/bin/init_flow <input file>
+```
 
 2. The actual flow solver `ARTS` is executed.  `ARTS` is run in parallel and takes a single command line argument (in addition to the `MPI` arguments): the name of the input file.  For example, `ARTS` can be run with `mpirun` on 16 processors by executing the command
-
-        mpirun -np 16 /home/<username>/NGA/bin/arts <input file>
-
+```
+  mpirun -np 16 /home/<username>/NGA/bin/arts <input file>
+```
 At minimum, the solver will dump limited diagnostic information (time, maximum velocities, etc.) to the screen and more detailed diagnostic information (maximum velocities, convergence information, CFL numbers, timings, etc.) to a `monitor` directory.
 
 Remark: when changing the number of nodes/cores/omp-threads, it is OK to read the same initial flow or restart data file, and there is no need to rerun the `init_flow`.
 
 To avoid having to write out the path to the `NGA` executables when running them, do the following. Open the `~/.bashrc` file (if on a workstation) or `~/.bash_profile` file (if on a cluster). Add the line
-
-    export PATH=$PATH:/home/<username>/<name of NGA directory>/bin
-
+```
+export PATH=$PATH:/home/<username>/<name of NGA directory>/bin
+```
 and save the file. Then, execute `source .bashrc` (replace .bashrc with .bash_profile if on a cluster). It should now be possible to run `init_flow`, `ARTS`, and other `NGA` executables with commands like `init_flow <input file>`.
 
 
@@ -558,27 +552,29 @@ The following is a list of input file keywords for `ARTS`.  Note that the keywor
 If doing LES and wish to use Lagrangian averaging, do the following:
 
 1. **Creating the `optdata` file.** Run `init_flow` for the simulation case as described above. This should generate a `data` file and potentially an `optdata` file. 
-  a. If an `optdata` file is generated, run `editData` (another executable that is installed with `NGA` in the `/home/<username>/NGA/bin/` directory) and choose option 1, "Print Min Max of Variable". Check that the variable list includes LM_VEL and MM_VEL. If the simulation includes any scalars, the `optdata` file should also contain LM_<SC> and MM_<SC> for each scalar (e.g., ZMIX, ZMIX2, and PROG for an FPVA combustion simulation. If the `optdata` file is missing any of these variables, add them as described in step 2. Otherwise, continue to step 3.
-  b. If no `optdata` file was generated, create a blank one by copying the data file generated by `init_flow` and emptying the variable list: 
 
-        cp <data file> optdata
-
+      a. If an `optdata` file is generated, run `editData` (another executable that is installed with `NGA` in the `/home/<username>/NGA/bin/` directory) and choose option 1, "Print Min Max of Variable". Check that the variable list includes LM_VEL and MM_VEL. If the simulation includes any scalars, the `optdata` file should also contain LM_<SC> and MM_<SC> for each scalar (e.g., ZMIX, ZMIX2, and PROG for an FPVA combustion simulation. If the `optdata` file is missing any of these variables, add them as described in step 2. Otherwise, continue to step 3.
+      
+      b. If no `optdata` file was generated, create a blank one by copying the data file generated by `init_flow` and emptying the variable list: 
+```
+cp <data file> optdata
+```
      
 Then, run `editData` (another executable that is installed with `NGA` in the `/home/<username>/NGA/bin/` directory) and choose option 5, "Empty variable list".
 
 2. **Adding variables to the `optdata` file.** The `optdata` file should always contain LM_VEL and MM_VEL. If the simulation includes any scalars, the `optdata` file should also contain LM_<SC> and MM_<SC> for each scalar (e.g., ZMIX, ZMIX2, and PROG for an FPVA combustion simulation. To add these variables, run `editData` and choose option 2, "Add variable". Add each variable individually. Typically, it is best to set the LMs to 0 and the MMs to 1.
 
 3. **Running in `NGA`.** Add the following to the `NGA` input file:
+```
+  ! Files 
+  Optional data to read :         <input optdata file>
+  Optional data to write:         <output optdata file>
 
-        ! Files 
-        Optional data to read :         <input optdata file>
-        Optional data to write:         <output optdata file>
-
-        ! Subfilter turbulence model
-        Use SGS model :                 .true.
-        SGS averaging :                 Lagrangian
-        SGS Override Lag. :             .true.
-
+  ! Subfilter turbulence model
+  Use SGS model :                 .true.
+  SGS averaging :                 Lagrangian
+  SGS Override Lag. :             .true.
+```
 After running the simulation for the first time, change the value of `SGS Override Lag.` to `.false`.
 
 ----
@@ -666,14 +662,14 @@ srun -n $NTASKS ~/NGA/bin/arts input_pipe
 ## LES of Pipe / Annulus Flow on New `TIGER`
 
 This example is a simulation of fully developed flow in a pipe and surrounding annulus. The fluid properties correspond to methane in the pipe and air in the annulus. An initial velocity profile is specified, but over time the flow transitions to turbulent and becomes fully developed because a periodic boundary condition is used in the *x* (axial) direction. The simulation is run using the input file `input_pipe` as described in [the section on running the code](#code execution). After running `init_flow`, create an `optdata` file. Also the `pipe.slurm` sample script for submitting the job to the `SLURM` scheduler on `TIGER` is included. Copy the script into the same directory as the input file, and then submit the job using the command
-
-    sbatch pipe.slurm
-
+```
+sbatch pipe.slurm
+```
 
 The script is set up to run the job on 80 processors (2 nodes, 40 cores each). In the `NGA` input file, it is specified that the domain will be split into 8 segments in the *y* (radial) direction, and each segment will be computed on four processors using `OpenMP`. After submitting the job, check its status using 
-
-    squeue -u <username>
-
+```
+squeue -u <username>
+```
 ----
 # Converting `Chemkin` format to `FlameMaster` and `NGA` format
 
@@ -776,32 +772,32 @@ cd make opt
 ## Initializing for a finite chem simulation
 When creating an initialization for the simulation, add a new case so as not to change others work. Call this case by the chemical mechanism, since specifying and initializing species will be the major difference from others. Fill a `names` array, which involves using the 8 character maximum names from before, and then initialize data for each species. A example case would look something like:
 ```
-     nvar = 17
-     allocate(data(nx,ny,nz,nvar))
-     allocate(names(nvar))
-     names = ''
-     data = 0.0_WP
+nvar = 17
+allocate(data(nx,ny,nz,nvar))
+allocate(names(nvar))
+names = ''
+data = 0.0_WP
 
-     ! Names of general variables
-     names(1) = 'U'
-     names(2) = 'V'
-     names(3) = 'W'
-     names(4) = 'P'
-     names(5) = 'RHO'
-     names(6) = 'dRHO'
-     names(16) = 'T'
-     names(17) = 'ZMIX'
+! Names of general variables
+names(1) = 'U'
+names(2) = 'V'
+names(3) = 'W'
+names(4) = 'P'
+names(5) = 'RHO'
+names(6) = 'dRHO'
+names(16) = 'T'
+names(17) = 'ZMIX'
 
-     ! Names of species
-     names(7) = 'N2'
-     names(8) = 'H'
-     names(9) = 'O2'
-     names(10) = 'O'
-     names(11) = 'OH'
-     names(12) = 'H2'
-     names(13) = 'H2O'
-     names(14) = 'HO2'
-     names(15) = 'H2O2'
+! Names of species
+names(7) = 'N2'
+names(8) = 'H'
+names(9) = 'O2'
+names(10) = 'O'
+names(11) = 'OH'
+names(12) = 'H2'
+names(13) = 'H2O'
+names(14) = 'HO2'
+names(15) = 'H2O2'
 ```
 Note that velocities and pressure come first in a given order, then other scalars like density, viscosity, diffusivity, etc. Next should come all species, in the same order and with the same names as from the previous section. Finally, temperature should be second from last, and mixture fraction **MUST BE LAST**. Finally, the data should be initialized as:
 ```
@@ -842,7 +838,6 @@ resources at the inner level of parallelism (e.g., `OpenMP`). at run time. This 
     ```bash
     ./configure --prefix=<DLB_PREFIX> [<configure-flags>]
     ```
-    
 4. Build and install
 
     ```bash
@@ -899,7 +894,6 @@ control through `OMPT`.
     # Reduce CPU binding to [1,3] and threads to 2
     myapp_pid=$!
     dlb_taskset -p $myapp_pid -c 1,3
-
     ```
 
 4. **Example 4:** Get a `TALP` summary report at the end of an execution
