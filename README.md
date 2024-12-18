@@ -4,7 +4,7 @@ Course Project for COS597E: Dynamic Load Balancing in a Massively Parallel React
 ## Installing `NGA`
 [Library Installation](#library-installation)
 
-[Code compilation](#Compiling-`NGA`)
+[Code compilation](#compiling-nga)
 
 ## Running `NGA`
 [Generating a data file](#generating-a-data-file)
@@ -17,7 +17,7 @@ Course Project for COS597E: Dynamic Load Balancing in a Massively Parallel React
 
 ## Miscellaneous
 
-[Converting Mechanisms for Finite Chem](#Converting-`Chemkin`-format-to-`FlameMaster`-and-`NGA`-format)
+[Converting Mechanisms for Finite Chem](#converting-chemkin-format-to-flamemaster-and-nga-format)
 
 ## Installing `LeWI`
 
@@ -27,9 +27,9 @@ Course Project for COS597E: Dynamic Load Balancing in a Massively Parallel React
 
 [Basic usage](#basic-usage)
 
-## [Reference Mapping](#reference-mapping)
+## [Reference Mapping Model](#reference-mapping)
 
-## [Citations](#citations)
+## [Citations and Related Work](#citations)
 
 ----
 # `NGA`
@@ -37,7 +37,7 @@ Next Generation Advanced Reacting Turbulence Solver (ARTS), a multi-dimensional,
 
 # Library Installation
 
-[NGA](home) requires five libraries: `LAPACK`, `SUNDIALS`, `FFTW`, `HYPRE`, and some version of `MPI`. These libraries must be installed prior to [compiling NGA](code-installation). The `MPI` library only needs to be installed if it has not been on the machine in use; note that all Princeton and DOE clusters already have an `MPI` library installed.
+`NGA` requires five libraries: `LAPACK`, `SUNDIALS`, `FFTW`, `HYPRE`, and some version of `MPI`. These libraries must be installed prior to [compiling NGA](#compiling-nga). The `MPI` library only needs to be installed if it has not been on the machine in use; note that all Princeton and DOE clusters already have an `MPI` library installed.
 
 *It is very important that the same compiler version (and `MPI` version) are used when installing these libraries and `NGA`.* There are many versions installed on the clusters, which can be viewed using the `module avail` command and loaded using the `module load` command. The recommended versions are as follows:
 
@@ -870,7 +870,7 @@ resources at the inner level of parallelism (e.g., `OpenMP`). at run time. This 
     export PATH=<DLB_PREFIX>/bin:$PATH
     ```
 
-## Basic usage
+# Basic usage
 
 Choose between linking or preloading the binary with the `LeWI` shared library `libdlb.so` and configure using the environment variable `DLB_ARGS`.
 
