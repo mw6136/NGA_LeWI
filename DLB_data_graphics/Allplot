@@ -1,0 +1,19 @@
+# Delete the generated figures
+find . -name "*.pdf" -type f -delete
+find . -name "*.png" -type f -delete
+
+
+cd 3d_spray/
+./Allplot
+cd ../
+
+cd unit_benchmark
+./Allplot
+cd ../
+
+cd shearlayer
+./Allplot
+cd ../
+
+cd appendix
+./Allplot
