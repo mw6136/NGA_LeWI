@@ -1,0 +1,97 @@
+# INITIALIZATION PARAMETERS ########################
+
+! Name
+Simulation :		Sandia Flame D
+
+! Parameters
+nx :			64
+nz :			64
+Length :		0.04
+
+! Pipes definition
+ny :			64	64
+Radius :		0.0	0.00225
+			0.002	0.00375
+Stretching :		2.0	2.0
+
+! Initial velocity field
+Mean U Velocity :	0	0 
+Mean W Velocity :	0	0
+Laminar initial flow :	0	0
+Fluctuation rel. amp. :	0	0
+
+! Files
+Init config file :	config
+Init data file :	data.0
+
+# RUNNING PARAMETERS ###############################
+
+! Files
+Configuration file :    config
+Data file to read :     data.0
+Data file to write :    data.1
+Data frequency :        1e-4 
+Optional data to read : optdata.0
+Optional data to write: optdata.1
+! Inflow file to write :	inflow.mz.v57
+! Inflow frequency :      0.1e-6
+! Inflow location :       0.04
+
+! Notes
+! 0 -> 1 : running simulation on 32 processors
+
+
+! Partitioning
+Processors along X :    5
+Processors along Y :    4
+Processors along Z :    1
+OpenMP threads :	4
+
+! Properties            methane         air @ 300K
+Chemistry model :       none
+Density :		0.651635	1.17214
+Viscosity :		1.14597e-5	1.86344e-5
+Diffusivity :           1e-5		1e-5
+Temperature :           300.0		300.0
+
+! Subgrid Scale model
+Use SGS model :         .true.
+SGS averaging :         Lagrangian
+SGS Override Lag. :     .true.
+
+! Body forces
+Gravity :		-9.8067	0.0	0.0
+
+! Time advancement
+Timestep size :         0.5e-6
+CFL number :            2
+Subiterations :         2
+
+! End of simulation
+Maximum iterations :    5000
+Maximum time :          100000
+Maximum wall time :     1.0
+
+! Velocity
+Velocity conv scheme :	2
+Velocity visc scheme :	2
+Implicit directions :	xyz
+
+! Pressure
+Pressure solver :	bicgstab
+Pressure fft :		.true.
+Pressure precond :	tridiag
+Pressure cvg :		1.E-7
+Pressure iterations :	1
+
+! Output
+Output type :           ensight-3D
+Output frequency :      2e-5
+
+! Statistics
+Statistics type :	1D-y
+Statistics locations x:	all
+Statistics frequency :	5e-5
+
+! So it doesn't crash
+Mixture fraction variance: .false. 

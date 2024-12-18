@@ -1,0 +1,164 @@
+# INITIALIZATION PARAMETERS ########################
+
+! Name
+Simulation :		quiescent 2-D outflow
+
+! x-Grid
+nx :			384
+
+! y-Grid
+ny :			366
+
+! z-Grid
+nz :			64
+
+! Channel geometry - use symmetry
+Channel full height :	0.100000
+Wall thickness :    	0.100000
+Inflow length :		0.100000
+
+Channel points :	48
+Stretching :   		1.05
+Wall points :		11
+
+! Minimum dx :  		60e-6
+
+! Initial velocity field
+U :  0
+V :  0
+W :  0
+Mean U Velocity :	0
+Mean W Velocity :	0
+Laminar initial flow : 	0
+Fluctuation rel. amp. : 0
+Pressure :  	      	101320
+Initial temperature :	300
+
+! Files
+Init config file :	config_area	 !config_JL_edit
+Init data file :	data_area		 !data_JL_edit
+
+! Init_flow partitioning
+Init processors along X :  1
+Init processors along Y :  1
+Init processors along Z :  1
+
+U jet : 0
+U coflow : 0
+U bulk : 0
+
+# RUNNING PARAMETERS ###############################
+
+! Files
+Configuration file :    config
+Data file to read :     data.0
+Data file to write :    data.1
+Data frequency :        1e-4 
+Optional data to read : optdata.0
+Optional data to write: optdata.1
+! Inflow file to write :	inflow.mz.v57
+! Inflow frequency :      0.1e-6
+! Inflow location :       0.04
+
+! Notes
+! 0 -> 1 : running simulation on 32 processors
+
+! Partitioning
+Processors along X :    32
+Processors along Y :    20
+Processors along Z :    1  
+OpenMP threads :   	1
+
+! Properties
+Chemistry model :	finite chem
+Molar diffusion :	.true.
+Lewis N2   :   		1.28645
+Lewis H    :	    	0.190182
+Lewis O2   :		1.11965
+Lewis O    :		0.729858
+Lewis OH   :		0.743361
+Lewis H2   :	     	0.315702
+Lewis H2O  :		0.858191
+Lewis HO2  :		1.12405
+Lewis H2O2 :		1.13135	
+
+! Initial density : 1.0
+Density : 1.0
+Viscosity : 1e-5
+Diffusivity : 1e-5
+Temperature : 300.0
+
+! BCs
+Inflow location : left, right, top, bottom
+Outflow location : left, right, top, bottom
+Inlet width :	0.00236	! radius
+Inlet velocity type :	file
+Inflow file to read :	inflow-ch5k_PM_primary_sc2.bin
+Inflow file rescale :	.false.
+Inlet u velocity :  	0 
+Inlet w velocity :	0 
+
+Inlet scalar values : 	N2,      8.090930e-01
+      	     	    	H,   	 1.0e-60
+      			O2,    	 1.695440e-01
+			O,  	 1.0e-60
+      			OH,    	 1.0e-60
+			H2,    	 2.136260e-02
+      			H2O,     1.0e-60
+      			HO2,     1.0e-60
+      			H2O2,    1.0e-60
+      			T,       300.0
+			ZMIX,    1.0
+      	     	    	
+! Ignition
+External ignition :	.false.
+Ignition x start :	1.0e-60
+Ignition x end : 	0.0080
+Ignition y start :	0.0000
+Ignition y end : 	0.0020
+Ignition axial symm. :	.false.
+
+! CVODE options
+Finitechem rel. tol. :  1e-12
+Finitechem abs. tol. :	1e-24
+
+! Subgrid Scale model
+Use SGS model :		.true.
+SGS averaging : 	Germano
+
+! Time advancement
+Timestep size :         8e-7
+CFL number :            0.6
+Subiterations :         4
+
+! End of simulation
+Maximum iterations :	100000	
+Maximum time :          1000
+Maximum wall time :     1.0
+
+! Velocity
+Velocity conv scheme :  2
+Velocity visc scheme :  2
+Implicit directions :	xyz
+
+! Pressure
+Pressure solver :       SMG
+Pressure precond :      none
+Pressure cvg :          1.0e-10
+Pressure iterations :   1000
+Pressure fft : 	    	.true.
+
+! Scalars
+Scalar scheme :		  weno3
+Strang splitting :	 .false.
+AF Jacobian :		 .true.
+Diagonal chem Jacobian : .false.
+Fix Mass :               .true. 
+
+! Output
+Output type : ensight-str-3D
+Output frequency : 1.0e-4
+
+! Statistics
+Statistics type: 2D
+Statistics frequency: 1.0e-04
