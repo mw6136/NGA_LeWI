@@ -1,0 +1,49 @@
+#!/bin/bash
+echo "This script will plot everything!"
+
+
+echo "Figure 1"
+cd fig1/
+python3 plot.py
+cd ../
+
+echo "Figure 4"
+cd fig4/
+python3 nproc.py
+python3 cellcount.py
+cd ../
+
+echo "Figure 6"
+cd fig6/
+python3 decomposition.py
+cd ../
+
+echo "Figure 7"
+cd fig7/
+python3 plot.py
+cd ../
+
+echo "Figure 8"
+cd fig8/
+python3 plot.py
+cd ../
+
+echo "Figure 9"
+cd fig9/
+python3 plot.py
+cd ../
+
+echo "Figure A1"
+cd fig_A1/
+python3 plot.py
+cd ../
+
+echo "Figure A2"
+cd fig_A2/
+python3 plot.py
+cd ../
+
+echo "Figure B1"
+cd fig_B1/
+python3 plot.py
+cd ../
