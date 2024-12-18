@@ -2,34 +2,34 @@
 Course Project for COS597E: Dynamic Load Balancing in a Massively Parallel Reacting Flow Solver
 
 ## Installing `NGA`
-[Library Installation](library-installation)
+[Library Installation](#library-installation)
 
-[Code compilation](code-installation)
+[Code compilation](#Compiling-`NGA`)
 
 ## Running `NGA`
-[Generating a data file](generating-a-data-file)
+[Generating a data file](#generating-a-data-file)
 
-[Code execution](code-execution)
+[Code execution](#code-execution)
 
-[Running on `TIGER`](running-on-tiger)
+[Running on `TIGER`](#running-on-tiger)
 
-[Examples](examples)
+[Examples](#examples)
 
 ## Miscellaneous
 
-[Converting Mechanisms for Finite Chem](finite-chem-mechanism)
+[Converting Mechanisms for Finite Chem](#Converting-`Chemkin`-format-to-`FlameMaster`-and-`NGA`-format)
 
 ## Installing `LeWI`
 
-[Library Installation](library-installation)
+[Library Installation](#library-installation)
 
 ## Basic usage of `LeWI`
 
-[Basic usage](basic-usage)
+[Basic usage](#basic-usage)
 
-## [Reference Mapping](reference-mapping)
+## [Reference Mapping](#reference-mapping)
 
-## [Citations](citations)
+## [Citations](#citations)
 
 ----
 # `NGA`
