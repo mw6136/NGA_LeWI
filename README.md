@@ -122,7 +122,7 @@ ARCH      = xiar
 ```
 In addition, the `TIMER` option will need to be changed.  Comment out the current setting, `TIMER = INT_ETIME`, and re-enable `TIMER = EXT_ETIME`, which is compatible with the `ifort` compiler.  There are additional options for a C compiler, but these do not need to be changed since `NGA` does not use the C interfaces to `LAPACK`.
 
-`NGA` will need the BLAS (Basic Linear Algebra Subprograms) library for simple matrix/vector math such as multiplication, etc., and the `LAPACK` library.  These libraries must be named, `libblas.a` and `liblapack.a`, respectively.  Therefore, edit the following options in `make.inc`:
+`NGA` will need the `BLAS` (Basic Linear Algebra Subprograms) library for simple matrix/vector math such as multiplication, etc., and the `LAPACK` library.  These libraries must be named, `libblas.a` and `liblapack.a`, respectively.  Therefore, edit the following options in `make.inc`:
 ```
 BLASLIB      = ../../libblas.a
 LAPACKLIB    = liblapack.a
@@ -131,7 +131,7 @@ To speed up compiling, compile in parallel.  Open `Makefile` and edit the instru
 
 The compilation of the two libraries is done in two steps in the following order:
 
-1. To compile BLAS, execute
+1. To compile `BLAS`, execute
 ```
 make blaslib
 ```  
