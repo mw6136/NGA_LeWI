@@ -167,7 +167,7 @@ export CFLAGS="-O3 -xhost -ip"
 export CXXFLAGS="-O3 -xhost -ip"
 export FFLAGS="-O3 -xhost -ip"
 ```
-To automatically generate a ``Chemkin`` for `FFTW`, run the `configure` script.  The option `prefix` will dictate where the code is installed.  For example, depending on superuser access, execute either
+To automatically generate a `Makefile` for `FFTW`, run the `configure` script.  The option `prefix` will dictate where the code is installed.  For example, depending on superuser access, execute either
 ```
 ./configure --prefix=/opt/fftw --enable-openmp
 ```
@@ -210,7 +210,7 @@ Then create bash variables to store the paths to the C and Fortran compilers. In
 ccpath="$(which icc)"
 fcpath="$(which ifort)"
 ```
-Now use the CMake to generate the ``Chemkin``.  Execute the following:
+Now use the CMake to generate the `Makefile`.  Execute the following:
 ```
 cmake -DCMAKE_INSTALL_PREFIX=/home/$USER/opt/sundials \
 -DCMAKE_BUILD_TYPE=Release \
