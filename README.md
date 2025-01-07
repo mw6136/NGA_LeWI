@@ -239,9 +239,9 @@ to `~/.bashrc`.  Don't forget to call `source ~/.bashrc` in the working terminal
 
 Message Passing Interface (`MPI`) is a standard for libraries that allow code parallelization on distributed memory systems.  **Only install an `MPI` implementation if one is not already installed on the machine in use. All clusters, including `TIGER`, already have an `MPI` implementation installed.**  The `MPI` compilers are required to compile `NGA` (and the `HYPRE` library in the next step), so include the line `module load openmpi/intel-16.0` in the `~/.bashrc` file.
 
-Install an `MPI` library on [CTRFL](https://ctrfl.princeton.edu/) workstations if it is not already installed.  `OpenMPI` is the recommended distribution, and the latest version (2.1.1 as of 08/17) can be downloaded from http://open-mpi.org.
+Install an `MPI` library on [CTRFL](https://ctrfl.princeton.edu/) workstations if it is not already installed.  `OpenMPI` is the recommended distribution, and the latest version (2.1.1 as of 08/17) can be downloaded from [http://open-mpi.org](http://open-mpi.org).
 
-Download and unpack the archive.  To automatically generate a ``Chemkin`` for `MPI`, run the `configure` script.  The option `prefix` will dictate where the code is installed.  For example, depending on superuser access, execute either
+Download and unpack the archive.  To automatically generate a `Makefile` for `MPI`, run the `configure` script.  The option `prefix` will dictate where the code is installed.  For example, depending on superuser access, execute either
 ```
 ./configure CC=icc CXX=icpc F77=ifort FC=ifort \
 CFLAGS="-O3 -xhost -ip" CXXFLAGS="-O3 -xhost -ip" \
