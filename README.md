@@ -152,7 +152,7 @@ for installation on a local workstation/laptop (superuser access available) or o
 ----
 ### `FFTW`
 
-`FFTW` (Fastest Fourier Transform in the West) is a library for computing discrete Fourier transforms.  The latest version of `FFTW` (3.3.10 as of 04/23) can be downloaded from http://www.fftw.org or via
+`FFTW` (Fastest Fourier Transform in the West) is a library for computing discrete Fourier transforms.  The latest version of `FFTW` (3.3.10 as of 04/23) can be downloaded from [http://www.fftw.org](http://www.fftw.org) or via
 ```
 wget http://www.fftw.org/fftw-3.3.10.tar.gz
 ```
